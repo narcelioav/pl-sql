@@ -132,3 +132,115 @@ BEGIN
   DBMS_OUTPUT.PUT_LINE('Número de linhas da tabela funcionario:'||num);
 END;
 </pre>
+
+<pre>
+  2.2 Desafio 2
+Desafio: Criar uma procedure que recebe como parâmetro o nome do departamento e verifica o número de funcionários deste departamento apresentando a seguinte mensagem:
+0 – O departamento não possui funcionários
+1-20 – Classificação – Departamento Pequeno
+21-30 – Classificação – Departamento Médio
+31 ou mais – Classificação – Departamento Grande
+</pre>
+
+<pre>
+  Solução:
+
+1. Recebe o nome do departamento como parâmetro de entrada.
+
+2. Conta quantos funcionários estão nesse departamento.
+
+3. Exibe uma mensagem conforme a faixa de quantidade.
+
+  Versão da procedure com parâmetro IN
+
+CREATE OR REPLACE PROCEDURE verifica_departamento(p_nome_departamento IN VARCHAR2) IS
+    v_qtd_funcionarios NUMBER;
+BEGIN
+    -- Conta quantos funcionários existem nesse departamento
+    SELECT COUNT(f.id_funcionario)
+      INTO v_qtd_funcionarios
+      FROM funcionario f
+      JOIN departamento d ON f.id_departamento = d.id_departamento
+     WHERE UPPER(d.nome_departamento) = UPPER(p_nome_departamento);
+
+    -- Exibe a classificação conforme o número de funcionários
+    IF v_qtd_funcionarios = 0 THEN
+        DBMS_OUTPUT.PUT_LINE('O departamento não possui funcionários');
+    ELSIF v_qtd_funcionarios BETWEEN 1 AND 20 THEN
+        DBMS_OUTPUT.PUT_LINE('Classificação – Departamento Pequeno (' || v_qtd_funcionarios || ' funcionários)');
+    ELSIF v_qtd_funcionarios BETWEEN 21 AND 30 THEN
+        DBMS_OUTPUT.PUT_LINE('Classificação – Departamento Médio (' || v_qtd_funcionarios || ' funcionários)');
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Classificação – Departamento Grande (' || v_qtd_funcionarios || ' funcionários)');
+    END IF;
+
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Departamento não encontrado.');
+END;
+
+Para testar:
+
+SET SERVEROUTPUT ON;
+EXEC verifica_departamento('Vendas');
+
+A procedure compara o nome do departamento sem diferenciar maiúsculas/minúsculas (UPPER()).
+
+Se o nome não existir na tabela departamento, o tratamento de exceção mostra a mensagem “Departamento não encontrado.”
+
+É importante que as tabelas funcionario e departamento estejam relacionadas pela coluna id_departamento.
+
+-----------------------------------------------------------------------------------------
+
+Ajustar a procedure para que, além de mostrar no console (DBMS_OUTPUT.PUT_LINE), ela também retorne a classificação como valor de saída, através de um parâmetro OUT.
+
+Versão da procedure com parâmetro OUT
+
+CREATE OR REPLACE PROCEDURE verificar_departamento(
+    p_nome_departamento IN VARCHAR2,
+    p_classificacao OUT VARCHAR2
+) IS
+    v_qtd_funcionarios NUMBER;
+BEGIN
+    -- Conta o número de funcionários do departamento informado
+    SELECT COUNT(f.id_funcionario)
+      INTO v_qtd_funcionarios
+      FROM funcionario f
+      JOIN departamento d ON f.id_departamento = d.id_departamento
+     WHERE UPPER(d.nome_departamento) = UPPER(p_nome_departamento);
+
+    -- Define o texto da classificação
+    IF v_qtd_funcionarios = 0 THEN
+        p_classificacao := 'O departamento não possui funcionários';
+    ELSIF v_qtd_funcionarios BETWEEN 1 AND 20 THEN
+        p_classificacao := 'Classificação - Departamento Pequeno (' || v_qtd_funcionarios || ' funcionários)';
+    ELSIF v_qtd_funcionarios BETWEEN 21 AND 30 THEN
+        p_classificacao := 'Classificação - Departamento Médio (' || v_qtd_funcionarios || ' funcionários)';
+    ELSE
+        p_classificacao := 'Classificação - Departamento Grande (' || v_qtd_funcionarios || ' funcionários)';
+    END IF;
+
+    -- Exibe também na saída
+    DBMS_OUTPUT.PUT_LINE(p_classificacao);
+
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        p_classificacao := 'Departamento não encontrado.';
+        DBMS_OUTPUT.PUT_LINE(p_classificacao);
+END;
+
+SET SERVEROUTPUT ON;
+VARIABLE v_resultado VARCHAR2(200);
+
+EXEC verificar_departamento('Vendas', :v_resultado);
+
+PRINT v_resultado;
+
+A procedure recebe o nome do departamento (p_nome_departamento).
+
+Calcula quantos funcionários há nele.
+
+Define a mensagem de classificação e grava no parâmetro OUT (p_classificacao).
+
+Também mostra a mensagem no console com DBMS_OUTPUT.
+</pre>
