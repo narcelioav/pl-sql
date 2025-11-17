@@ -135,6 +135,7 @@ END;
 
 <pre>
   2.2 Desafio 2
+
 Desafio: Criar uma procedure que recebe como parâmetro o nome do departamento e verifica o número de funcionários deste departamento apresentando a seguinte mensagem:
 0 – O departamento não possui funcionários
 1-20 – Classificação – Departamento Pequeno
@@ -143,7 +144,50 @@ Desafio: Criar uma procedure que recebe como parâmetro o nome do departamento e
 </pre>
 
 <pre>
-  Solução:
+
+  Solução 1:
+
+Solução do Desafio:
+CREATE OR REPLACE PROCEDURE verifica_depto (p_nome IN VARCHAR2) IS
+   v_cont NUMBER;
+BEGIN
+SELECT count(*)
+INTO v_cont
+FROM funcionario f inner join departamento d
+on f.id_departamento = d.id_departamento
+WHERE d.nome_departamento = p_nome;
+
+IF v_cont =0
+THEN DBMS_OUTPUT.PUT_LINE('O departamento não possui funcionários');
+ELSIF v_cont <=20
+THEN DBMS_OUTPUT.PUT_LINE('Departamento Pequeno');
+ELSIF v_cont <=30
+THEN DBMS_OUTPUT.PUT_LINE('Departamento Médio');
+ELSE DBMS_OUTPUT.PUT_LINE('Departamento Grande');
+END IF;
+END;
+
+
+Explicando o código:
+
+  A PROCEDURE recebe como parâmetro o nome no departamento. Para descobrir o total de funcionários do departamento é necessário fazer um JOIN entre as tabelas funcionario e departamento pois a informação de que funcionário trabalha em qual departamento está na tabela funcionário e o nome do departamento está na tabela departamento. O número de funcionários no departamento é atribuído a variável v_cont através do INTO.
+
+O comando de seleção IF é utilizado para determinar o que será impresso na tela dependendo do conteúdo da variável v_cont.
+
+Na declaração do parâmetro p_nome não pode ser colocado o tamanho VARCHAR2(30) como é feito na declaração de variáveis. 
+
+CREATE OR REPLACE PROCEDURE verifica_depto (p_nome IN VARCHAR2(30)) IS
+
+A declaração acima retornaria um erro sintático.
+
+
+Chamada da procedure:
+
+EXEC verifica_depto ('Vendas');
+
+-----------------------------------------------------------------------------------------
+
+  Solução 2:
 
 1. Recebe o nome do departamento como parâmetro de entrada.
 
@@ -191,6 +235,8 @@ Se o nome não existir na tabela departamento, o tratamento de exceção mostra 
 É importante que as tabelas funcionario e departamento estejam relacionadas pela coluna id_departamento.
 
 -----------------------------------------------------------------------------------------
+
+Solução 3:
 
 Ajustar a procedure para que, além de mostrar no console (DBMS_OUTPUT.PUT_LINE), ela também retorne a classificação como valor de saída, através de um parâmetro OUT.
 
@@ -243,4 +289,45 @@ Calcula quantos funcionários há nele.
 Define a mensagem de classificação e grava no parâmetro OUT (p_classificacao).
 
 Também mostra a mensagem no console com DBMS_OUTPUT.
+</pre>
+
+<pre>
+  2.3 Desafio 3
+
+Desafio:  Criar um procedimento que recebe como parâmetro o id do funcionário e retorna em um parâmetro de saída o cargo do funcionário.
+</pre>
+
+<pre>
+  2.3.1 Solução do Desafio 3
+Solução do Desafio:
+
+CREATE OR REPLACE PROCEDURE retorna_cargo
+(p_id_funcionario IN funcionario.id_funcionario%type,
+p_cargo out cargo.nome_cargo%type)
+IS
+BEGIN
+SELECT nome_cargo
+INTO p_cargo
+FROM funcionario f inner join cargo c
+on f.id_cargo = c.id_cargo
+WHERE f.id_funcionario = p_id_funcionario;
+END;
+
+Explicando o código:
+A procedure recebe um parâmetro de entrada p_id_funcionario que é do mesmo tipo da coluna id_funcionario da tabela funcionario mas este parâmetro também poderia ser definido como sendo do tipo NUMBER. O outro parâmetro é um parâmetro de saída (OUT) do mesmo tipo da coluna nome_cargo da tabela cargo mas também poderia ser definido como VARCHAR2.
+
+O SELECT faz um JOIN entre as tabelas funcionario (id_funcionario) e a tabela cargo (nome do cargo do funcionario).
+
+O parâmetro OUT p_cargo recebe o nome do cargo na cláusula  INTO p_cargo (comando SELECT).
+
+Chamada da procedure: 
+
+DECLARE
+  v_nome VARCHAR2(30);
+BEGIN
+  retorna_cargo(1,v_nome);
+  DBMS_OUTPUT.PUT_LINE('Cargo do funcionário:'||v_nome);
+END;
+
+Na chamada da procedure retorna_cargo(1,v_nome), o parâmetro 1 é o id do funcionário. A variável v_nome vai receber o nome do cargo do funcionário retornado pelo parâmetro p_cargo. O put_line imprime na tela o texto Cargo do funcionário: e o conteúdo da variável v_nome.
 </pre>
