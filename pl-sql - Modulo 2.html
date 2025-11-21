@@ -303,7 +303,7 @@ Solução do Desafio:
 
 CREATE OR REPLACE PROCEDURE retorna_cargo
 (p_id_funcionario IN funcionario.id_funcionario%type,
-p_cargo out cargo.nome_cargo%type)
+p_cargo OUT cargo.nome_cargo%type)
 IS
 BEGIN
 SELECT nome_cargo
@@ -330,4 +330,83 @@ BEGIN
 END;
 
 Na chamada da procedure retorna_cargo(1,v_nome), o parâmetro 1 é o id do funcionário. A variável v_nome vai receber o nome do cargo do funcionário retornado pelo parâmetro p_cargo. O put_line imprime na tela o texto Cargo do funcionário: e o conteúdo da variável v_nome.
+</pre>
+
+<pre>
+  2.4 Function
+Uma function é um outro tipo de bloco PL/SQL que diferente da procedure retorna um valor na sua chamada. No código da function deve ser definido o valor e o tipo de dado que será retornado. Assim como a procedure, uma function pode ou não ter parâmetros.
+
+Uma function pode ter um ou mais comandos DML (insert, update e delete) e um ou mais comandos SELECT.
+
+Exemplo: Função que retorna a soma de salários de um determinado departamento, o id do departamento deve ser passado como parâmetro.
+CREATE OR REPLACE FUNCTION soma_salarios(p_id IN NUMBER)
+    RETURN NUMBER IS
+ soma NUMBER;
+BEGIN
+
+  SELECT sum(salario)
+  INTO soma
+  FROM funcionario
+  where id_departamento = p_id;
+
+RETURN soma;
+END;
+
+Explicando o código: Na declaração da função é necessário colocar o tipo de dados que será retornado. Neste exemplo o retorno será do tipo numérico RETURN NUMBER. O RETURN é colocado depois da declaração dos parâmetros da função.
+
+A soma dos salários é atribuída a variável soma no INTO soma do comando SELECT.
+
+O RETURN soma antes do END da function retorna a soma dos salários para o bloco que chamou a função.
+
+Chamada da função:
+
+DECLARE
+  total NUMBER;
+BEGIN
+  total := soma_salarios(100);
+  DBMS_OUTPUT.PUT_LINE('Soma dos salários do departamento:'||total);
+END;
+
+Como a function retorna um valor na sua chamada, a chamada da função deve ser atribuída a uma variável, total := soma_salarios(100);
+
+O conteúdo da variável total é apresentado na tela no comando put_line.
+</pre>
+
+<pre>
+  Desafio: Criar uma função que recebe como parâmetro o nome do funcionário e retorna em um parâmetro de saída o nome do departamento deste funcionário.
+</pre>
+
+<pre>
+  2.5.1 Solução do Desafio 4
+Solução do Desafio:
+
+CREATE OR REPLACE FUNCTION retorna_departamento (p_nome IN VARCHAR2) RETURN VARCHAR2
+IS
+v_depto VARCHAR2(30);   
+BEGIN
+SELECT nome_departamento
+INTO v_depto
+FROM funcionario f inner join departamento d
+on f.id_departamento = d.id_departamento
+where f.nome_funcionario = p_nome;
+
+RETURN v_depto;
+END;
+
+Explicando o código:
+
+A função recebe como parâmetro de entrada o nome do funcionário (parâmetro p_nome). Na cláusula WHERE do comando SELECT, o campo nome_funcionario da tabela funcionario é comparado com o parâmetro p_nome, ou seja o nome do funcionário passado como parâmetro.  
+
+A função vai retornar o nome do departamento do funcionário que é um VARCHAR2 por isso a função tem um RETURN VARCHAR2. Assim como na declaração dos parâmetros, não deve ser colocado o tamanho da cadeia de caracteres.
+
+A variável v_depto recebe o nome do departamento do funcionário em INTO v_depto. O conteúdo desta variável é retornado em RETURN v_depto. 
+
+Chamada da função: a chamada da função retorna_departamento é atribuída a variável v_nome no bloco PL/SQL anônimo.
+
+DECLARE
+  v_nome VARCHAR2(30);
+BEGIN
+  v_nome:= retorna_departamento('Pedro');
+  DBMS_OUTPUT.PUT_LINE('Nome do Departamento:'||v_nome);
+END;
 </pre>
