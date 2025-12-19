@@ -373,6 +373,8 @@ O conteúdo da variável total é apresentado na tela no comando put_line.
 </pre>
 
 <pre>
+  2.5 Desafio 4
+
   Desafio: Criar uma função que recebe como parâmetro o nome do funcionário e retorna em um parâmetro de saída o nome do departamento deste funcionário.
 </pre>
 
@@ -409,4 +411,259 @@ BEGIN
   v_nome:= retorna_departamento('Pedro');
   DBMS_OUTPUT.PUT_LINE('Nome do Departamento:'||v_nome);
 END;
+</pre>
+
+<pre>
+  2.6 Cursor
+Quando o Oracle executa uma consulta ele utilizada uma área da Memória para colocar o resultado desta consulta. Para recuperar cada uma das linhas do resultado utilizamos cursores. Existem dois tipos de cursores, implícitos e explícitos. Para qualquer comando DML (e SELECT que retorna uma única linha) o Oracle implicitamente abre um cursor chamado SQL. A cláusula INTO pode ser usado no SELECT apenas nas consultas que retornam uma única linha, nas consultas que retornam uma linha ou mais devemos utilizar cursores explícitos. Os cursores podem ser utilizados em qualquer tipo de bloco PL/SQL (anônimo, procedure, function e trigger).
+
+
+
+Declaração de cursor explícito
+CURSOR cursor_name [(parameter[, parameter]...)]
+[RETURN return_type] IS select_statement;
+
+Exemplo: Recuperar o código, nome e salário de todos os funcionários da empresa. Neste caso não podemos utilizar o INTO pois o SELECT pode retornar mais de uma linha.
+
+CURSOR c_funcinario IS
+SELECT id_funcionario, nome_funcionario, salario 
+FROM funcionario;
+
+
+
+Operações associadas a cursores
+
+Open: Executa a consulta associada ao cursor e armazena o resultado na memória cujo início é apontado pelo cursor.
+
+open <nome-cursor>
+
+Fetch: Recupera uma linha do resultado. Transfere os seus valores para as variáveis e avança o cursor para a próxima linha.
+
+Sintaxe:
+
+fetch <nome-cursor> into <variáveis>
+
+Close: Desativa o cursor e libera os dados da área temporária de memória.
+
+
+
+Atributos do cursor
+%ISOPEN - Retorna verdadeiro se o cursor estiver aberto
+%NOTFOUND - Retorna verdadeiro se o FETCH mais recente não retornou nenhuma linha
+%FOUND - Retorna verdadeiro se o FETCH mais recente retornou uma linha
+%ROWCOUNT - Retorna o número total de linhas recuperadas até o momento
+</pre>
+
+<pre>
+  2.6.1 Exemplo
+Neste exemplo criamos um bloco PL/SQL anônimo com um cursor explícito chamado c_funcionario. Este cursor recupera o nome do funcionario e o salario de todos os funcionários da tabela funcionario. Como a tabela pode ter várias linhas não seria possível utilizar o SELECT .. INTO, então a solução é criar um cursor explícito. 
+
+DECLARE
+CURSOR c_funcionario IS
+SELECT nome_funcionario, salario FROM Funcionario;
+v_nome_funcionario funcionario.nome_funcionario%TYPE;
+
+v_salario funcionario.salario%TYPE;
+BEGIN
+OPEN c_funcionario;
+LOOP
+FETCH c_funcionario INTO v_nome_funcionario,v_salario;
+IF c_funcionario%NOTFOUND
+THEN -- se encontrar o fim do cursor
+EXIT;
+END IF;
+DBMS_OUTPUT.PUT_LINE(v_nome_funcionario);
+DBMS_OUTPUT.PUT_LINE(v_salario);
+END LOOP;
+CLOSE c_funcionario;
+END;
+
+Explicando o código
+ 
+CURSOR c_funcionario IS
+SELECT nome_funcionario, salario 
+FROM Funcionario;
+
+v_nome_funcionario funcionario.nome_funcionario%TYPE;
+v_salario funcionario.salario%TYPE;
+
+Declara o cursor explícito c_funcionario e as variáveis v_nome e v_salario que receberão respectivamente o nome do funcionário (nome_funcionario) e o salário (salario), campos da cláusula SELECT. A variável v_nome é do mesmo tipo (%type) da coluna nome_funcionario da tabela funcionario (funcionario.nome_funcionario%TYPE), mas esta variável também poderia ser declara como um VARCHAR2(40) que é o tipo da coluna nome_funcionario na tabela funcionario. A variável v_salario é do mesmo tipo (%type) da coluna salario da tabela funcionario (funcionario.salario%TYPE), mas poderia ter sido declara como um NUMBER que o tipo da coluna salario na tabela funcionario. 
+
+OPEN c_funcionario, o comando OPEN executa a consulta associada ao cursor e coloca o resultado em uma área temporária na memória. 
+FETCH c_funcionario INTO v_nome_funcionario,v_salario; Analisando o código acima é possível verificar que o FETCH está dentro de um laço de repetição (LOOP ... END LOOP) pois o FETCH pega cada uma das linhas do resultado, se por exemplo o select retornar 20 linhas o FETCH precisa ser executado 20 vezes. O valor das colunas nome_funcionario e salario são transferidos para as variáveis v_nome e v_salario respectivamente a cada repetição (FETCH c_funcionario INTO v_nome_funcionario,v_salario).
+
+IF c_funcionario%NOTFOUND
+THEN -- se encontrar o fim do cursor
+EXIT;
+END IF;
+
+O teste acima é executado dentro do laço de repetição logo depois do comando FETCH . Se o FETCH for executado e não retornar nenhuma linha (c_funcionario%NOTFOUND) significa que todas as linhas do resultado foram recuperadas e o laço de repetição pode ser encerrado (EXIT).
+Depois que o laço de repetição for encerrado e todas as linhas forem recuperadas o cursor pode ser fechado (CLOSE c_funcionario)
+</pre>
+
+<pre>
+  2.6.2 FOR LOOP
+O comando FOR LOOP pode ser utilizado ao invés dos comandos OPEN, FETCH e CLOSE. Na verdade o FOR LOOP executa as 3 operações de forma implícita simplificando o código.
+
+Exemplo1: Criar um bloco PL/SQL anônimo para recuperar o nome e o salário de todos os funcionários do departamento 1.
+
+DECLARE
+CURSOR c_funcionario IS
+SELECT nome_funcionario,salario
+FROM funcionario f
+WHERE f.id_departamento =1;
+BEGIN
+/* FOR record_name IN cursor_name */
+/* For open,fetch e close implícito */
+FOR r_funcionario IN c_funcionario LOOP
+DBMS_OUTPUT.PUT_LINE(r_funcionario.nome_funcionario);
+DBMS_OUTPUT.PUT_LINE(r_funcionario.salario);
+END LOOP; 
+END;
+
+/*  */ é comentário
+
+Explicando o código:
+O cursor é declarado em CURSOR com o nome c_funcionario.
+No bloco principal do bloco PL/SQL o comando FOR LOOP é utilizado. r_funcionario é uma declaração implícita de uma variável registro que vai conter todos os campos da cláusula SELECT, neste caso nome_funcionario e salario. No comando FOR o IN c_funcionario é o nome do nosso CURSOR. É possível observar que não são utilizados os comandos OPEN, FETCH e CLOSE pois estas operações são executadas implicitamente pelo comando FOR LOOP. 
+Dentro do comando FOR o PUT_LINE imprime o nome do funcionário (r_funcionario.nome_funcionario) e o salário (r_funcionario.salario).
+
+Exemplo2: Neste exemplo vamos criar uma procedure que recupera o nome e o salário dos funcionários de um determinado departamento. O id do departamento é determinado por uma variável e o cursor é executado mais de uma vez, uma para cada valor de id_departamento.
+
+CREATE OR REPLACE PROCEDURE consulta_funcionario IS
+v_id_departamento NUMBER; -- deve ser declarado antes do cursor
+CURSOR c_funcionario IS
+SELECT nome_funcionario, salario
+FROM Funcionario
+WHERE id_departamento = v_id_departamento;
+BEGIN
+v_id_departamento:=1;
+DBMS_OUTPUT.PUT_LINE('Departamento = 1 ');
+FOR r_funcionario IN c_funcionario LOOP
+DBMS_OUTPUT.PUT_LINE(r_funcionario.nome_funcionario||' '|| r_funcionario.salario); 
+END LOOP;
+v_id_departamento:=2;
+DBMS_OUTPUT.PUT_LINE('Departamento = 2');
+FOR r_funcionario IN c_funcionario LOOP 
+DBMS_OUTPUT.PUT_LINE(r_funcionario.nome_funcionario||' '|| r_funcionario .salario); 
+END LOOP;
+ END;﻿
+
+Explicando o código:
+
+ Na declaração do cursor utilizamos a variável v_id_departamento na cláusula WHERE para recuperar os funcionários onde id_departamento é igual ao conteúdo da variável v_id_departamento. 
+
+ A varíável v_id_departamento começa recebendo o valor 1 (v_id_departamento := 1). Quando o primeiro FOR LOOP for executado o SELECT associado ao cursor será executado para os fucionários do departamento 1.
+
+  Depois que o cursor é executado para o departamento 1 a variável v_id_deptarmento recebe o valor 2 (v_id_departamento :=2) e o cursor é executado novamente (segundo FOR LOOP) agora para o departamento 2.
+
+Exemplo3: Neste exemplo criamos um bloco PL/SQL anônimo para recuperar os dados de todos os funcionários. Não foi feita a declaração do cursor na seção DECLARE pois o SELECT foi colocado dentro do comando FOR LOOP. Esta estrutura não é recomenda se o a consulta for mais complexa pois o código pode ficar confuso com uma consulta muito grande no comando FOR LOOP.
+A seção DECLARE não foi utilizada no bloco PL/SQL pois não temos nenhuma variável neste bloco PL/SQL.
+
+
+BEGIN
+FOR r_funcionario IN (SELECT * FROM funcionario) LOOP
+DBMS_OUTPUT.PUT_LINE(r_funcionario.nome_funcionario||' '|| r_funcionario .salario); 
+END LOOP;
+END;
+</pre>
+
+<pre>
+  2.6.3 Passando parâmetro para cursores
+É possível passar parâmetros para os cursores, assim o parâmetro pode ser utilizado na cláusula WHERE para definir o critério da consulta. O valor do parâmetro é definido na utilização do cursor.
+
+Exemplo: Bloco PL/SQL anônimo com um select associado a um cursor que recebe como parâmetro o salário e faz uma consulta que retorna o nome, id do departamento e salário dos funcionários cujo salário é maior do que o valor passado como parâmetro.
+
+DECLARE
+CURSOR c_funcionario (p_salario number) IS
+SELECT nome_funcionario, id_departamento, salario 
+FROM Funcionario
+WHERE salario > p_salario;
+
+BEGIN 
+
+FOR r_funcionario IN c_funcionario(1000) LOOP
+DBMS_OUTPUT.PUT_LINE(r_funcionario.nome_funcionario||' r_funcionario.salario); 
+END LOOP; 
+
+FOR r_funcionario IN c_funcionario(3000) LOOP
+DBMS_OUTPUT.PUT_LINE(r_funcionario.nome_funcionario||' r_funcionario.salario); 
+END LOOP; 
+
+END;
+
+Explicando o código: o cursor é executado duas vezes no bloco PL/SQL. O primeiro FOR LOOP executado a consulta associada ao cursor com o parâmetro 1000, portanto vai retornar os dados dos funcionários cujo salário é maior do que 1000. O segundo FOR LOOP executa o cursor com o parâmetro 3000 retornando os dados dos funcionários cujo salário é maior do que 3000.
+</pre>
+
+<pre>
+  2.7 Desafio 4
+Desafio: Neste desafio você deve utilizar um cursor explícito. Fazer um procedimento que escreva na tela as seguintes informações dos funcionários de um determinado departamento: o nome do funcionário, cargo e salário. (o id do departamento deve ser passado como parâmetro)
+</pre>
+
+<pre>
+  2.7.1 Solução do Desafio 4
+
+CREATE OR REPLACE PROCEDURE retorna_func_depto (p_id_departamento IN funcionario.id_departamento%type)
+IS
+
+CURSOR c_func_cargo IS
+SELECT nome_funcionario, nome_cargo,salario
+FROM funcironario f inner join cargo c
+on f.id_cargo = c.id_cargo
+where f.id_departamento = p_id_departamento;
+
+BEGIN
+
+FOR res IN c_func_cargo LOOP
+DBMS_OUTPUT.PUT_LINE(res.nome_funcionario||' ' ||res.nome_cargo||' ' ||res.salario);
+END LOOP;
+
+END;
+
+Explicando o código: O SELECT associado ao cursor faz um join entre as tabelas funcionario e cargo pois queremos retornar o nome, salario que estão na tabela funcionario e o cargo deste funcionário que está na tabela cargo. As tabelas são ligadas pelo id_cargo (ON f.id_cargo=c.id_cargo). Serão recuperados os dados dos funcionários que são do departamento cujo id é passado como parâmetro (WHERE f.id_departamento = p_id_departamento). 
+O FOR LOOP faz o open,fetch e close do cursor de forma implícita, assim como a variável res tem declaração implícita (não precisa ser declara explicitamente na seção de declaração de variáveis) e só pode ser utilizada dentro do FOR LOOP. A variável res é um registro com os campos nome_funcionario, nome_cargo, salario que são os campos do select (SELECT nome_funcionario, nome_cargo,salario). Para imprimir o nome do funcionário é necessário colocar a variável res, um ponto e depois o nome do campo (res.nome_funcionario).
+
+
+Versão 2: 
+CREATE OR REPLACE PROCEDURE retorna_func_depto (p_id_departamento IN funcionario.id_departamento%type) IS
+
+CURSOR c_func_cargo IS
+SELECT nome_funcionario, nome_cargo,salario
+FROM Funcionario f inner join cargo c
+on f.id_cargo = c.id_cargo
+WHERE f.id_departamento = p_id_departamento;
+
+r_fc c_func_cargo%rowtype;
+
+BEGIN
+
+open c_func_cargo;
+LOOP
+FETCH c_func_cargo INTO r_fc;
+IF c_func_cargo%NOTFOUND
+THEN -- se encontrar o fim do cursor
+EXIT;
+END IF;
+DBMS_OUTPUT.PUT_LINE(r_fc.nome_funcionario||' ' ||r_fc.nome_cargo||' ' ||r_fc.salario);
+END LOOP;
+CLOSE c_func_cargo;
+
+﻿END;
+
+
+Explicando o código: A diferença desta versão para a anterior é que os comandos OPEN, FETCH e CLOSE são explícitos pois não está sendo utilizado o comando FOR LOOP que realiza estas operações de forma implícita. Neste caso o comando FETCH está dentro de um laço de repetição pois deve ser executado uma vez para cada uma das linhas do resultado. A variável r_fc é declarada antes do BEGIN e é um registro com o mesmo tipo da linha (rowtype) do cursor c_func_cargo, ou seja, um registro com os campos do select (nome_funcionario, nome_cargo,salario). Depois de utilizado o cursor deve ser fechado para que a área de memória que contém o resultado da consulta seja liberada. O CLOSE c_func_cargo é executado depois do faço de repetição, depois do END LOOP.
+</pre>
+
+<pre>
+  2.8 Teste seus conhecimentos
+Agora que você já explorou sobre o curso, vamos testar seus conhecimentos!
+
+É importante que você faça com calma e atenção. Após enviar sua resposta definitivamente, você poderá conferir seus acertos e visualizar a correção das questões. E não se preocupe em anotar tudo, pois as questões ficarão disponíveis após respondê-las, com as respostas que você escolheu.
+
+Quantidade de questões apresentadas: 10
+Exibição das questões: em página única
+Quantidade de tentativas permitidas: 3
+Tempo estimado para realizar a tentativa: 20 a 40 minutos
+Método de avaliação: nota mais alta
+Bons estudos!
 </pre>
