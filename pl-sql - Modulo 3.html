@@ -1,0 +1,142 @@
+IFRS - Instituto Federal Rio Grande do Sul
+
+Banco de Dados: Oracle PL/SQL - Turma 2025B
+
+MODULO 3 - Exception, Package e Trigger
+
+<pre>
+3.1 Exception
+Quando um erro ocorre na execução de um bloco PL/SQL o Oracle dispara uma exceção. Por exemplo, se utilizamos a cláusula INTO em um SELECT e este retornar mais de uma linha será gerada uma exceção chamada TOO_MANY_ROWS.  Se o SELECT INTO não retornar nenhuma linha a exceção gerada será NO_DATA_FOUND. Também é possível gerar uma exceção utilizando o comando RAISE. Esta execeção poderá ser tratada na seção EXCEPTION e assim o erro não será propagado para o programa principal.
+
+Exemplo:
+
+DECLARE
+    v_salario NUMBER;
+    p_id NUMBER;
+BEGIN
+  p_id:= 100;
+
+  SELECT salario
+  INTO v_salario
+  FROM funcionario
+  WHERE id_departamento=p_id;
+
+  DBMS_OUTPUT.PUT_LINE('Salario: '||v_salario);
+
+END;
+
+Erro: Quando o bloco foi executado o Oracle gerou uma exceção (TOO_MANY_ROWS) e apresentou a seguinte mensagem de erro pois o departamento 100 tem vários funcionários. Lembrando que a cláusula INTO só pode ser utilizada se o SELECT retornar apenas uma linha.
+
+ORA-01422: exact fetch returns more than requested number of rows ORA-06512: at line 7 ORA-06512: at "SYS.DBMS_SQL", line 1721
+</pre>
+
+<pre>
+  3.1.1 RAISE_APPLICATION_ERROR
+A procedure RAISE_APPLICATION_ERROR permite que o programador crie uma mensagem de erro específica para seu programa. O primeiro argumento é um valor entre -20999 e -20000, o segundo argumento é a mensagem de erro.
+
+Vamos ver um exemplo.
+
+Exemplo: Procedure que recebe como parâmetro o id_departamento e apresenta na tela o total de funcionários deste departamento.
+
+CREATE OR REPLACE PROCEDURE func_depto(p_id IN NUMBER) IS
+  v_total NUMBER;
+BEGIN
+ IF p_id<(esse sinal deu divergencia ...)0
+ THEN RAISE_APPLICATION_ERROR(-20300,'Valor inválido');
+ END IF;
+ 
+SELECT COUNT(*)
+ INTO v_total
+ FROM funcionario
+ WHERE id_departamento=p_id;
+
+ DBMS_OUTPUT.PUT_LINE('Departamento '||p_id||': '||v_total|| ' funcionários');
+END;
+
+Executando a procedure com id_departamento 100
+EXEC func_depto(100);
+
+Saída no Oracle Live
+Statement processed.
+
+Departamento 100: 2 funcionários
+
+Executando a procedure com id_departamento -10
+ORA-20300: Valor inválido ORA-06512: at "SQL_ENIEZAZTOGSJZMMEAEZWXPCOS.FUNC_DEPTO", line 5 ORA-06512: at line 1 ORA-06512: at "SYS.DBMS_SQL", line 1721
+
+Explicando o código e a chamada da procedure
+A procedure func_depto recebe como parâmetro o número do departamento. No início da procedure foi colocado um comando de seleção que chama a procedure RAISE_APLICATION_ERROR se o valor informado para o id_departamento for negativo. Neste caso será apresentada a mensagem Valor inválido.
+
+</pre>
+
+<pre>
+  3.1.2 EXCEPTION NO_DATA_FOUND
+Considere uma procedure que recebe como parâmetro o id_funcionario e apresenta na tela o nome do funcionario.
+
+CREATE OR REPLACE PROCEDURE nome_func(p_id IN NUMBER) IS
+v_nome funcionario.nome_funcionario%type;
+BEGIN
+ 
+  SELECT nome_funcionario
+  INTO v_nome
+  FROM funcionario
+  WHERE id_funcionario=p_id;
+
+  DBMS_OUTPUT.PUT_LINE('Funcionário: '||v_nome);
+
+ EXCEPTION
+ WHEN NO_DATA_FOUND
+ THEN
+   DBMS_OUTPUT.PUT_LINE('Funcionário não existe');
+END;
+
+Chamando a procedure com id de funcionário igual a 4
+exec nome_func(4);
+
+Saída no Oracle Live
+Statement processed.
+
+Funcionário: Maria
+
+Chamando a procedure com id de funcionário igual a 9
+O funcionário 9 não existe no banco de dados.
+
+exec nome_func(9);
+
+Saída no Oracle Live
+Como a exceção foi tratada no bloco Exception (When NO_DATA_FOUND) não será gerado um erro apenas a mensagem do PUT_LINE.
+
+Statement processed.
+
+ Funcionário não existe
+
+Vamos ver mais um exemplo agora  sem tratamento da exceção NO_DATA_FOUND.
+
+CREATE OR REPLACE PROCEDURE nome_func(p_id IN NUMBER) IS
+v_nome funcionario.nome_funcionario%type;
+BEGIN
+ 
+  SELECT nome_funcionario
+  INTO v_nome
+  FROM funcionario
+  WHERE id_funcionario=p_id;
+
+  DBMS_OUTPUT.PUT_LINE('Funcionário: '||v_nome);
+
+END;
+
+Chamando a procedure com id de funcionário igual a 9
+O funcionário 9 não existe no banco de dados.
+
+exec nome_func(9);
+
+Saída no Oracle Live
+Como a exceção não foi tratada o erro foi gerado.
+
+ORA-01403: no data found ORA-06512: at "SQL_ENIEZAZTOGSJZMMEAEZWXPCOS.NOME_FUNC", line 5 ORA-06512: at line 1 ORA-06512: at "SYS.DBMS_SQL", line 1721
+
+</pre>
+
+<pre>
+  
+</pre>
