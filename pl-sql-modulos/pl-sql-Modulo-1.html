@@ -1,0 +1,561 @@
+IFRS - Instituto Federal Rio Grande do Sul
+
+Banco de Dados: Oracle PL/SQL - Turma 2025B
+
+MODULO 1 - Comandos da Linguagem PL/SQL e Blocos Anônimos
+
+<pre>
+1.1 PL/SQL
+O PL/SQL (Procedural Language for SQL) é uma linguagem que permite a criação de blocos de comandos em uma linguagem
+procedural (if, for, declaração de variáveis) e comandos SQL (Structured Query Language).
+
+A linguagem PL/SQL utiliza comandos SQL por isso é muito importante o domínio e conhecimento do SQL antes de aprender
+PL/SQL.
+
+Existem 5 tipos de blocos PL/SQL:
+
+Bloco anônimo: bloco de comandos PL/SQL que são executados mas não ficam armazenados no banco de dados.
+Procedure: bloco de comandos PL/SQL que ficam armazenados no banco de dados e podem ser executados em outro momento ou
+chamados de um programa de aplicação.
+Function: bloco de comandos PL/SQL que retornam um valor na sua chamada e podem ser executados em outro momento ou
+chamados de um programa de aplicação.
+Package: Pacote contendo procedures e functions.
+Trigger: bloco de comandos PL/SQL que é executado automaticamente quando um determinado evento acontece.
+É importante saber que outros SGBDs (Sistemas Gerenciadores de Banco de Dados) Relacionais permitem a criação de
+procedures, functions e triggers mas a sintaxe pode ser diferente do PL/SQL.
+</pre>
+<pre>
+1.2 Oracle Live
+O Oracle é um dos Sistemas Gerenciadores de Banco de Dados mais utilizados por empresas e instituições de ensino em todo
+mundo.
+
+O Oracle disponibiliza uma instância do Banco de Dados na núvem, o Oracle Live, para que estudantes possam utilizar este
+ambiente para aprender SQL (Structured Query Language) e PL/SQL (Procedural Language for SQL).
+
+O Oracle Live pode ser acessado através de um navegador sem a necessidade de instalar qualquer software no computador.
+
+Para ter acesso ao ambiente é necessário realizar um cadastro bem simples no site da Oracle.
+
+Todos os códigos apresentados neste curso foram executados e testados no Oracle Live.
+</pre>
+<pre>
+1.3 Script Funcionario-Departamento
+Este curso utiliza as tabelas funcionario, departamento e cargo. Os comandos a seguir podem ser executados no Oracle
+Live para criar e inserir dados nas tabelas Funcionario, departamento e cargo. Também são criadas três sequences uma
+para cada uma das tabelas.
+
+-- significa que é um comentário
+
+Os comandos drop eliminam os objetos criados.
+
+--CREATE
+
+Create table departamento
+(id_departamento NUMBER CONSTRAINT pk_departamento PRIMARY KEY,
+nome_departamento varchar2(15));
+
+Create table cargo
+(id_cargo NUMBER CONSTRAINT pk_cargo PRIMARY KEY,
+nome_cargo VARCHAR2(15),
+min_sal NUMBER,
+max_sal NUMBER);
+
+Create table funcionario
+(id_funcionario NUMBER CONSTRAINT pk_funcionario PRIMARY KEY,
+nome_funcionario VARCHAR2(40),
+salario NUMBER,
+id_departamento NUMBER,
+id_cargo NUMBER);
+
+alter table funcionario add constraint FK_ID_cargo foreign key (id_cargo) references cargo(id_cargo);
+alter table funcionario add constraint FK_ID_departamento foreign key (id_departamento) references departamento
+(id_departamento);
+
+CREATE SEQUENCE Sfuncionario NOCACHE;
+CREATE SEQUENCE Sdepartamento START WITH 100 NOCACHE;
+CREATE SEQUENCE Scargo START WITH 300 NOCACHE;
+
+--INSERT
+
+INSERT INTO departamento (id_departamento, nome_departamento) VALUES (sdepartamento.nextval,'Vendas');
+INSERT INTO departamento (id_departamento, nome_departamento) VALUES (sdepartamento.nextval,'Contabilidade');
+
+INSERT INTO Cargo (id_cargo, nome_cargo, min_sal, max_sal)
+VALUES (scargo.nextval, 'Vendedor',1000,5000);
+INSERT INTO Cargo (id_cargo, nome_cargo, min_sal, max_sal)
+VALUES (scargo.nextval, 'Contador',1000,5000);
+
+INSERT INTO funcionario (id_funcionario, nome_funcionario, salario,id_departamento, id_cargo) VALUES
+(sfuncionario.nextval,'Pedro',2000,100,300);
+
+INSERT INTO funcionario (id_funcionario, nome_funcionario, salario,id_departamento, id_cargo) VALUES
+(sfuncionario.nextval,'Ana',3000,100,300);
+
+INSERT INTO funcionario (id_funcionario, nome_funcionario, salario,id_departamento, id_cargo) VALUES
+(sfuncionario.nextval,'Marta',5000,101,301);
+
+INSERT INTO funcionario (id_funcionario, nome_funcionario, salario,id_departamento, id_cargo) VALUES
+(sfuncionario.nextval,'Maria',4000,101,301);
+
+--DROP
+Drop table funcionario;
+Drop table departamento;
+Drop table cargo;
+Drop sequence SFuncionario;
+Drop sequence SDepartamento;
+Drop sequence SCargo;
+</pre>
+<pre>
+1.4 Declaração de Variáveis
+Atenção:
+A linguagem PL/SQL não é case sensitive portanto não faz distinção enter maiúsculas e minúsculas. Sendo assim, as
+variáveis v_nome e V_NOME são idênticas.
+Os comandos e palavras reservadas estão sendo escritos em maiúsculo neste curso para facilitar a compreensão.
+O ponto e vírgula deve ser utilizado no final de cada comando.
+
+
+Declaração de variáveis e constantes
+
+As variáveis devem começar por um caracter. O único caracter especial aceito é o under_line (_). O nome de uma variável
+não pode ser uma palavra reservada (identificar existente na linguagem, como por exemplo: data, begin, exception, entre
+outros.
+
+Exemplos:
+v_valor identificar válido
+v+valor identificador inválido
+v-valor identicador inválido
+valor identificador válido
+begin identificar inválido
+
+O Oracle possui uma grande quantidade de tipos de dados sendo os mais comuns:
+VARCHAR2(tamanho): cadeia de caracteres de tamanho variável. O tamanho máximo de caracteres deve ser colocado entre
+parênteses.
+CHAR(tamanho): cadeia de caracteres de tamanho fixo. Se o tamanho não for especificado a cadeia de caracteres será de
+tamanho 1.
+NUMBER(tamanho, casas decimais): O tamanho é o total de dígitos e o número de casas decimais é o número de casas depois
+da vírgula. O tamanho e as casas decimais são opcionais.
+DATE: armazena data e hora
+
+Importante: Todo os comandos devem ser finalizado com ponto e vírgula.
+
+Exemplo de declaração de variáveis:
+
+v_idade DATE;
+nome VARCHAR2(30);
+data_nasc DATE;
+v_salario NUMBER(10,2);
+
+As varáveis podem ser inicializadas na declaração.
+
+v_nome VARCHAR2(20) := 'Maria';
+O variável v_nome que é do tipo varchar2 e de tamanho máximo 20, é inicializada com a cadeia de caracteres Maria.
+
+A variável v_data do tipo DATE é inicializada com a data e hora atual. A função sysdate retorna a a data e hora atual.
+Obs:
+:= é o comando de atribuição.
+
+v_data DATE := sysdate;
+
+Utilização do %type
+
+É possível declarar uma variável como sendo do mesmo tipo de uma coluna de uma determinada tabela (anchored data types).
+Desta forma é possível definir que o tipo de uma variável é o mesmo de outro objeto.
+Exemplo:
+v_id_funcionario funcionario.id_funcionario%type;
+
+A variável v_id_funcionario é do mesmo tipo do campo id_funcionario da tabela funcionario. Ou seja, se a coluna
+id_funcionario da tabela funcionario é do tipo NUMBER a variável v_id_funcionario também será deste mesmo tipo de dados.
+Assim se o tipo do campo id_funcionario da tabela funcionario for alterado não será necessário alterar o código PL/SQL.
+
+Utilização do %rowtype
+
+reg_funcionario funcionario%rowtype;
+
+A variável reg_funcionario é do mesmo tipo da linha(rowtype) da tabela funcionario. Como a nossa tabela funcionario tem
+os campos (id_funcionario, nome_funcionario,salario, id_departamento, id_cargo). A variável reg_funcionario terá estes
+mesmos campos.
+
+Esta declaração será muito utilizada quando estivermos trabalhando com cursores.
+</pre>
+<pre>
+1.5 Comando de Atribuição
+Comando de Atribuição
+
+Para atribuir um valor a uma variável deve-se utilizar o :=
+<code>
+<variável> := <valor>;
+
+Exemplo, atribuição de valores numéricos:
+valor := 10;
+soma := 20+5;
+
+Atribuição de cadeia de caracteres:
+Cadeia de caracteres deve ficar entre aspas simples.
+
+nome := ‘Ana’;
+endereco := ‘Rua Vicentino’;
+
+Atribuição utilizando uma função:
+data := sysdate;
+usuario :=user;
+
+sysdate é uma função do Oracle que retorna a data e hora atual. A função user retorna o nome do usuário.
+</code>
+</pre>
+<pre>
+1.6 Comando de Seleção
+Comando IF-THEN-ELSE
+
+Os comandos de seleção são muito utilizados na maioria dos programas. Eles servem para que possamos estabelecer
+condições para execução de um mais comandos.
+
+IF boolean_expression1 THEN
+sequence_of_statements1;
+[ELSIF Boolean_expression2 THEN
+sequence_of_statement2;]
+..........
+.........
+[ELSE
+sequence_of_statement3;]
+END IF;
+
+obs: Os colchetes indicam que os comandos que estão entre os colchetes são opcionais no comando de seleção IF.
+Os seja, não é obrigatório que um comando de seleção IF tenha as cláusulas ELSIF e ELSE.
+
+Exemplo 1:
+
+Considere o seguinte exemplo, para determinar se um aluno está aprovado ou não em uma determinada disciplina é
+necessário testar a média final deste aluno. Se a média final for maior ou igual a 7 a mensagem Aprovado deve
+ser exibida, caso contrário deve aparecer a mensagem Reprovado. Então a nossa condição é média >= 7. Se esta
+condição for verdadeira devemos escreve Aprovado, se for falsa vamos escrever Reprovado.
+
+IF media >= 7 THEN
+dbms_output.put_line('Aprovado');
+ELSE dbms_output.put_line('Reprovado');
+END IF;
+
+
+
+obs: a procedure put_line do pacote DBMS_OUTPUT imprime uma mensagem na tela. Para habilitar a saída no
+aplicativo da Oracle chamado Sql Developer é necessário executar o comando set serveroutput on no início da
+sessão. No Oracle live não é necessário executar o set serveroutput on.
+
+Exemplo 2:
+<code>
+IF valor > 0 THEN
+saldo := 'positivo';
+ELSIF valor<0 THEN saldo :='negativo' ; ELSE saldo :='nulo' ; END IF; Exemplo 3: IF valor> 10 THEN
+    valor := valor *0.20;
+    END IF;
+
+    Comando CASE
+
+O comando CASE também é um comando de seleção/condição e pode ser utilizado para determinar quais comandos
+devem ser executados dependendo de uma condição.
+
+Exemplo 4:
+
+    CASE conceito
+    WHEN 'A' THEN dbms_output.put_line('Excelente');
+    WHEN 'B' THEN dbms_output.put_line('Muito Bom');
+    WHEN 'C' THEN dbms_output.put_line('Bom');
+    WHEN 'D' THEN dbms_output.put_line('Médio');
+    WHEN 'F' THEN dbms_output.put_line('Ruim');
+    ELSE dbms_output.put_line('Não definido');
+    END CASE;
+
+Exemplo 5:
+    CASE
+    WHEN media>=9 THEN dbms_output.put_line('Conceito A');
+    WHEN media>=8 THEN dbms_output.put_line('Conceito B');
+    WHEN media>=7 THEN dbms_output.put_line('Conceito C');
+    ELSE dbms_output.put_line('Conceito D');
+    END CASE;
+
+Atenção: a cláusula ELSE é opcional no comando CASE. No exemplo 4 a variável de seleção está logo depois da
+palavra CASE e os possíveis valores aparecem na cláusula WHEN. No exemplo 5 a expressão utilizando
+operadores relacionais (>=) aparece na cláusula WHEN.
+Importante: Assim como acontece com o comando de seleção IF ... ELSIF quando é encontrada a primeira
+condição verdadeira as demais condições não são testadas.
+</code>
+</pre>
+<pre>
+1.7 Comando de Repetição
+
+Comandos de Repetição
+Os comandos de repetição permitem que um ou mais comandos que estão dentro do bloco de repetição sejam
+executados por um determinado número de vezes (repetição contada) ou não (repetição não contada).
+
+LOOP - END LOOP
+Sintaxe:
+
+LOOP
+Sequence of Statement
+EXIT WHEN condition;
+END LOOP;
+
+Exemplo 1:
+
+v_cont:=1;
+LOOP
+dbms_output.put_line('Repetição: '|| v_cont);
+v_cont:= v_cont+1;
+EXIT WHEN v_cont = 6;
+END LOOP;
+
+Explicando o Exemplo 1: a variável v_cont é a variável de controle do laço, ela é inicializada com 1 antes
+do laço de repetição. A cada repetição esta variável é incrementada de mais 1 (v_cont:=v_cont+1) quando este
+valor atingir 6 (exit when v_cont = 6) o fluxo de controle passa para o próximo comando depois do END LOOP.
+O || é um operador de concatenação, ele é utilizado para concatenar a string Repetição: com o valor da
+variável v_cont.
+
+IMPORTANTE: Não esquecer de inicializar a variável de controle (neste exemplo o v_cont) antes do laço de
+repetição (v_cont:=1) e incrementar a variável de controle dentro do laço de repetição (v_cont:=v_cont+1).
+
+Saída do comando:
+
+Repetição: 1
+Repetição: 2
+Repetição: 3
+Repetição: 4
+Repetição: 5
+
+Exemplo 2: Este exemplo é semelhante ao anterior mas utiliza o comando IF para testar a saída do laço de
+repetição.
+
+v_cont := 1;
+
+LOOP
+dbms_output.put_line('Repetição: '|| v_cont);
+v_cont:= v_cont+1;
+IF v_cont=6 THEN
+EXIT;
+END IF;
+END LOOP;
+
+
+WHILE LOOP
+Exemplo 3: No comando de repetição WHILE o teste para controle das repetições é feito no início do bloco de
+repetição. Se o teste for verdadeiro o fluxo de controle entra no bloco do WHILE e são executados os
+comandos entre o comando WHILE e END LOOP. Caso contrário será executado o próximo comando depois do END
+LOOP ou seja depois do bloco de repetição.
+
+v_cont := 1;
+WHILE v_cont <= 5 LOOP dbms_output.put_line('Repetição: '|| v_cont);
+      v_cont:= v_cont+1;
+END LOOP;
+
+
+Saída do comando: A resultado da execução do comando será o mesmo dos comandos anteriores:
+
+Repetição: 1
+Repetição: 2
+Repetição: 3
+Repetição: 4
+Repetição: 5
+
+
+FOR LOOP
+O comando FOR é utilizado para repetições contadas (por exemplo, repete 10 vezes, 50 vezes). A inicialização da variável de controle do laço e o limite de repetições é colocado na entrada do comando. O incremento da variável de controle é feita pelo próprio comando for. O usuário não deve incrementar a variável de controle. 
+
+Exemplo 4:
+FOR v_cont IN 1..5 LOOP
+      dbms_output.put_line(' Interação '|| v_cont);
+END LOOP;
+
+Obs: v_cont é a variável de controle do laço de repetição.
+
+Exemplo 5: O trecho de código abaixo apresenta um erro sintático pois a variável de controle v_cont não pode ser incrementa (o incremento é realizado implicitamente pelo comando FOR).
+
+FOR v_cont IN 1..5 LOOP
+      dbms_output.put_line(' Repetição: '|| v_cont);
+      v_cont:=v_cont + 1;
+END LOOP;
+
+Erro apresentado pelo Oracle Live:
+<code>
+PLS-00363: a expressão ' V_CONT' não pode ser usada como um destino de designação ORA-06550: linha 57, coluna 7:
+  </code>
+
+  PL/SQL: Statement ignored
+</pre>
+<pre>
+1.8 Bloco PL/SQL Anônimo
+Um bloco PL/SQL anônimo não possui um nome e não fica armazenado no Banco de Dados.
+
+Sintaxe:
+
+[DECLARE]
+.....
+BEGIN
+…
+[EXCEPTION]
+..
+END;﻿
+
+
+As seções EXCEPTION e DECLARE não são obrigatórias. Se o bloco PL/SQL não tiver variáveis não é necessário colocar a cláusula DECLARE. Se o bloco PL/SQL não tiver tratamento de exceção não é necessária a seção EXCEPTION.
+
+Exemplo 1:
+
+BEGIN
+  dbms_output.put_line('Bloco PL/SQL');
+END;
+
+O bloco PL/SQL utiliza a procedute PUT_LINE do pacote DBMS_OUTPUT para imprimir a mensagem "Bloco PL/SQL" na tela. Como este bloco PL/SQL não possui variáveis não foi necessário definir a seção declaração de variáveis com DECLARE.
+
+Exemplo 2: Bloco PL/SQL com seção de declaração de variáveis.
+
+    DECLARE
+     valor NUMBER;
+     BEGIN
+valor:= 1000;
+dbms_output.put_line('Valor Total:'||valor);
+     END;
+
+      O Bloco PL/SQL é executada mas não fica armazenado no banco de dados.
+</pre>
+<pre>
+1.9 SELECT INTO
+Uma das formas de manipular o resultado de uma consulta em um bloco PL/SQL é utilizando a cláusula INTO.
+
+Exemplo 1:
+   Bloco PL/SQL que recupera o nome e o salário do funcionário de código 1. 
+
+DECLARE
+  v_nome VARCHAR2(20);
+  v_salario NUMBER;
+
+BEGIN
+   SELECT nome_funcionario,salario
+   INTO v_nome,v_salario
+   FROM funcionario
+   WHERE id_funcionario=1;
+
+   DBMS_OUTPUT.PUT_LINE('Nome: '||v_nome);
+   DBMS_OUTPUT.PUT_LINE('Salário: '||v_salario);
+
+END;
+
+Explicando o código: Após a execução da instrução SELECT as variáveis v_nome e v_salario, recebem respectivamente o nome e o salário do funcionário de código 1.
+
+   A procedure put_line é utilizada para apresentar as informações na tela. O operador || concatena o string Nome: e o conteúdo da variável v_nome no primeiro comando put_line. 
+
+Resultado da execução do Bloco PL/SQL:
+
+Statement processed.
+Nome: Pedro
+Salário: 2000
+
+ATENÇÃO: O INTO só pode ser utilizado se o SELECT retorna apenas uma linha. Se o SELECT retornar mais de uma linha deve-se utilizar cursores explícitos como será apresentador posteriormente.
+
+Exemplo 2: O bloco PL/SQL a seguir apresenta um erro sintático (o comando não está de acordo com as regras da linguagem) pois não possui a cláusula INTO.
+
+DECLARE
+  v_nome VARCHAR2(20);
+  v_salario NUMBER;
+
+BEGIN
+   SELECT nome_funcionario,salario
+   FROM funcionario
+   WHERE id_funcionario=1;
+
+   DBMS_OUTPUT.PUT_LINE('Nome:'||v_nome);
+   DBMS_OUTPUT.PUT_LINE('Salário:'||v_salario);
+
+
+END;
+
+Erro do Oracle Live:
+
+PLS-00428: an INTO clause is expected in this SELECT statement
+
+</pre>
+
+<pre>
+1.10 Desafio 1
+
+Desafio: Criar um bloco PL/SQL que insere 10 linhas na tabela funcionário com id_departamento 100 e id_cargo 300.
+
+Dica: Para o nome do funcionário utilizei Funcionário1, Funcionário 2, .. com um contador para gerar estes valores. O salário pode iniciar em 2000 e ser acrescido de 100 a cada repetição.
+</pre>
+
+<pre>
+1.10.1 Solução do Desafio 1
+Solução do Desafio:
+
+Declare 
+  v_i NUMBER(6);
+  v_sal NUMBER(6) := 2000;
+BEGIN
+  FOR v_i IN 1..10 LOOP
+    Insert into funcionario(id_funcionario, nome_funcionario,salario, id_departamento, id_cargo) values(sfuncionario.nextval,'Funcionário'||v_i,v_sal,100,300);
+    v_sal := v_sal + 100;
+END LOOP;
+END;
+
+Explicando o código:
+
+Declare 
+  v_i NUMBER(6);
+  v_sal NUMBER(6) := 2000;
+
+
+Declaração das variáveis v_i do tipo number(6) e v_sal number(6) que foi inicializada com 2000.
+
+Código:
+
+
+
+FOR v_i IN 1..10 LOOP
+    Insert into funcionario(id_funcionario, nome_funcionario,salario, id_departamento, id_cargo) values(sfuncionario.nextval,'Funcionário'||v_i,v_sal,100,300);
+    v_sal := v_sal + 100;
+END LOOP;
+
+Explicação:
+
+- O comando insert será executado 10 vezes (  FOR v_i IN 1..10 LOOP)
+ -   Insert into funcionario(id_funcionario, nome_funcionario,salario, id_departamento, id_cargo) values(sfuncionario.nextval,'Funcionário'||v_i,v_sal,100,300);
+
+ (id_funcionario, nome_funcionario,salario, id_departamento, id_cargo):  são os campos da tabela funcionario.
+
+ - values(sfuncionario.nextval,'Funcionário'||v_i,v_sal,100,300):  
+
+   sfuncionario.nextval gera o próximo valor da sequence sfuncionario, 
+
+   'Funcionário'||v_i: A cada repetição do comando FOR gera o nome do funcionário. Na primeira repetição do laço o v_i será 1 portanto o nome do funcionário será Funcionário1, depois Funcionário2, até Funcionário10.
+
+  100,300: insere os valores 100 para id_departamento e 300 para id_cargo.
+
+    v_sal := v_sal + 100;
+
+Após a execução do bloco PL/SQL serão inseridas as seguintes linhas na tabela funcionário:
+
+Tabela 1 - Funcionário
+
+ID_FUNCIONARIO	NOME_FUNCIONARIO	SALARIO	ID_DEPARTAMENTO	ID_CARGO
+1	Funcionário1	2000	100	300
+2	Funcionário2	2100	100	300
+3	Funcionário3	2200	100	300
+4	Funcionário4	2300	100	300
+5	Funcionário5	2400	100	300
+6	Funcionário6	2500	100	300
+7	Funcionário7	2600	100	300
+8	Funcionário8	2700	100	300
+9	Funcionário9	2800	100	300
+10	Funcionário10	2900	100	300
+
+</pre>
+<pre>
+1.11 Teste seus conhecimentos
+Agora que você já explorou sobre o curso, vamos testar seus conhecimentos!
+
+É importante que você faça com calma e atenção. Após enviar sua resposta definitivamente, você poderá conferir seus acertos e visualizar a correção das questões. E não se preocupe em anotar tudo, pois as questões ficarão disponíveis após respondê-las, com as respostas que você escolheu.
+
+Quantidade de questões apresentadas: 10
+Exibição das questões: em página única
+Quantidade de tentativas permitidas: 3
+Tempo estimado para realizar a tentativa: 20 a 40 minutos
+Método de avaliação: nota mais alta
+Bons estudos!
+</pre>

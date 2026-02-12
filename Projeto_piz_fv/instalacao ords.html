@@ -1,0 +1,1966 @@
+<pre>
+    Perfeito 😄
+Java OK e na versão ideal: Java 17 LTS ✅
+Agora dá pra seguir sem gambiarra.
+
+Vamos instalar o ORDS e acabar de vez com esse loop de login.
+
+🚀 INSTALAÇÃO DO ORDS (passo a passo – Windows + XE 18c)
+🔹 Passo 1 – Baixar o ORDS
+
+Baixe a versão mais recente do ORDS no site da Oracle (ZIP).
+
+Depois de baixar:
+
+Extraia, por exemplo, para:
+
+C:\ords
+
+
+Dentro dela você deve ver algo como:
+
+C:\ords\ords.war
+
+🔹 Passo 2 – Criar pasta de configuração
+
+Crie esta pasta:
+
+C:\ords\config
+
+🔹 Passo 3 – Abrir o Prompt como Administrador
+
+Muito importante ⚠️
+Clique com o botão direito no Prompt de Comando → Executar como administrador
+
+🔹 Passo 4 – Executar a configuração do ORDS
+
+No prompt:
+
+cd C:\ords
+
+
+Agora rode:
+
+java -jar ords.war install
+
+🔹 Passo 5 – Responder as perguntas (copie exatamente)
+
+Quando ele perguntar:
+
+1️⃣ Diretório de configuração
+Enter the configuration directory:
+C:\ords\config
+
+2️⃣ Tipo de instalação
+Select a database connection type:
+1
+
+
+👉 Basic
+
+3️⃣ Dados do banco
+
+Use exatamente assim (ajuste a senha):
+
+Enter database hostname: localhost
+Enter database listener port: 1521
+Enter database service name: XEPDB1
+Enter database username: SYS
+Enter database password: (senha do SYS)
+
+
+Quando perguntar:
+
+Enter database role:
+
+
+Digite:
+
+SYSDBA
+
+4️⃣ Criar usuários do ORDS
+
+Quando aparecer algo como:
+
+Create ORDS schema user? [Y/n]:
+
+
+👉 Digite Y para tudo.
+
+5️⃣ Porta do ORDS
+
+Quando perguntar a porta:
+
+Enter the HTTP port [8080]:
+
+
+👉 Pode apertar ENTER ou usar 8080
+
+🔹 Passo 6 – Subir o ORDS
+
+Depois que terminar sem erro, execute:
+
+java -jar ords.war serve
+
+
+Se tudo estiver certo, você verá algo como:
+
+INFO: Oracle REST Data Services initialized
+INFO: Listening on port 8080
+
+
+🚫 Não feche esse prompt enquanto estiver usando o APEX.
+
+🌐 Passo 7 – Acessar o APEX no Chrome
+
+Abra o navegador e acesse:
+
+http://localhost:8080/ords
+
+
+Clique em Administration ou vá direto:
+
+http://localhost:8080/ords/apex_admin
+
+Login:
+
+Usuário: ADMIN
+
+Senha: aquela que você definiu no apxchpwd.sql
+
+🎉 Agora entra de primeira, sem loop.
+
+🧠 Por que agora funciona?
+
+Porque:
+
+Browser → ORDS → APEX → XE
+
+
+Antes você estava tentando:
+
+Browser → XE (XDB) → APEX ❌
+
+Próximo passo (se você quiser)
+
+Depois que entrar no APEX, a gente pode:
+
+Criar workspace
+
+Associar schema (PIZZARIA 👀)
+
+Criar a primeira aplicação
+
+Ou configurar ORDS como serviço do Windows
+
+👉 Me diga o que aparece quando acessar http://localhost:8080/ords
+Se der qualquer erro, manda o print que eu resolvo com você 💪
+</pre>
+
+<pre>
+    achei isso no site da oracle, devo baixar: Oracle REST Data Services (ORDS)
+Developers choose ORDS for its streamlined and efficient approach to creating REST APIs. ORDS serves as a critical bridge between the Oracle AI Database and modern development practices—including microservices, CI/CD workflows, LLMs, generative AI, vector search, graph queries, polyglot applications, and more.
+
+Sim 👍 é exatamente isso que você deve baixar.
+Pode ir sem medo — esse Oracle REST Data Services (ORDS) é o componente obrigatório para acessar o APEX pelo navegador hoje em dia.
+
+Vou deixar bem claro pra não ficar nenhuma dúvida.
+
+✅ O que você deve baixar
+
+No site da Oracle, procure por:
+
+👉 Oracle REST Data Services (ORDS)
+(normalmente vem como um arquivo ZIP)
+
+📦 Dentro do ZIP você vai encontrar:
+
+ords.war
+
+
+⚠️ É esse arquivo ords.war que interessa.
+
+❌ O que NÃO é necessário baixar agora
+
+Você não precisa se preocupar com:
+
+microservices
+
+CI/CD
+
+LLMs
+
+AI
+
+vector search
+
+graph
+
+Isso é marketing da Oracle 😅
+Para nós, o ORDS vai servir apenas como:
+
+Navegador → ORDS → APEX → Oracle XE
+
+🔍 Confirmações importantes (checklist rápido)
+
+Antes de baixar, confira:
+
+✔️ Java 17 → OK (você já confirmou)
+
+✔️ Oracle XE rodando
+
+✔️ APEX instalado
+
+✔️ ADMIN do APEX criado
+
+👉 Falta somente o ORDS
+
+📥 Depois de baixar, faça isso
+
+Extraia o ZIP para:
+
+C:\ords
+
+
+Verifique se existe:
+
+C:\ords\ords.war
+
+
+Não execute nada ainda
+
+Assim que você confirmar:
+
+“Já baixei e extraí o ORDS”
+
+eu te guio linha por linha, copiando e colando, até:
+
+http://localhost:8080/ords
+
+
+abrir no Chrome 🎯
+
+Sem erro, sem loop de login, prometo 😉
+</pre>
+
+<pre>
+    Perfeito 👍 você chegou exatamente no ponto certo do instalador do ORDS.
+Essa pergunta é normal — vou te dizer exatamente o que responder.
+
+📌 Tela atual do ORDS
+
+Ele está perguntando como vai se conectar ao banco:
+
+Digite um número para selecionar o tipo de conexão do banco de dados a ser usado
+
+[1] Básico (nome do host, porta, nome do serviço)
+[2] TNS (alias, diretório do TNS)
+[3] URL do banco de dados personalizado
+
+Choose [1]:
+
+✅ Resposta correta para o seu caso
+
+👉 Digite: 1
+👉 Pressione Enter
+
+Motivo:
+
+Você está em localhost
+
+Oracle XE
+
+Sem necessidade de TNS avançado agora
+
+É a forma mais simples e segura
+
+🔜 Próximas perguntas (já te preparo 😄)
+
+Depois de escolher 1, ele vai perguntar algo como:
+
+1️⃣ Host
+Enter the database host name [localhost]:
+
+
+✔️ Pressione Enter
+
+2️⃣ Porta
+Enter the database listen port [1521]:
+
+
+✔️ Pressione Enter
+
+3️⃣ Serviço
+Enter the database service name:
+
+
+👉 Digite:
+
+XEPDB1
+
+
+✔️ Enter
+
+4️⃣ Usuário
+Enter the database user name with administrator privileges:
+
+
+👉 Digite:
+
+SYS
+
+
+Depois ele vai pedir:
+
+SYS as SYSDBA? (y/n)
+
+
+👉 Digite: y
+
+5️⃣ Senha
+
+👉 Digite a senha do SYS (não aparece nada ao digitar — é normal)
+
+⚠️ Importante
+
+Se em qualquer momento aparecer erro:
+
+não feche
+
+tire print
+
+copie e cole aqui
+
+Mas até agora você está indo perfeitamente 👏
+Continue digitando 1 agora e me diga qual foi a próxima pergunta.
+</pre>
+
+<pre>
+    Perfeito — essa tela é ótima notícia 👍
+Você já passou da parte crítica. Vamos com calma.
+
+🔴 Sobre o erro ORA-01017 (login/senha inválidos)
+
+Isso aconteceu na primeira tentativa, mas repare que:
+
+👉 Depois ele recuperou as informações corretamente
+👉 Agora ele já reconhece:
+
+Usuário Administrador: SYS AS SYSDBA
+Conexão Básica: HOST=localhost PORT=1521 SERVICE_NAME=xepdb1
+ORDS não está instalado no banco de dados. A instalação do ORDS é obrigatória.
+
+
+Ou seja: agora está tudo certo.
+Provavelmente você digitou a senha errada na primeira vez e acertou na segunda.
+
+✅ O que fazer AGORA
+
+Ele está pedindo confirmação final:
+
+[A] Aceitar e Continuar - Criar configuração e instalar o ORDS no banco de dados
+[S] Sair - Não prosseguir
+Choose [A]:
+
+
+👉 Digite: A
+👉 Pressione Enter
+
+🔎 O que ele vai fazer a partir daqui
+
+Automaticamente o ORDS vai:
+
+Criar o usuário ORDS_PUBLIC_USER
+
+Configurar o runtime do ORDS no banco
+
+Integrar o APEX com o ORDS
+
+Subir o ORDS em modo Standalone
+
+Abrir o serviço HTTP na porta 8080
+
+Isso pode demorar alguns minutos ⏳
+👉 Não feche o terminal
+👉 Não interrompa
+
+🌐 Quando terminar
+
+Você verá mensagens parecidas com:
+
+ORDS initialized
+Standalone mode started
+
+
+Aí você testa no navegador:
+
+http://localhost:8080/ords
+
+
+ou direto no APEX:
+
+http://localhost:8080/ords/apex
+
+⚠️ Se aparecer erro
+
+Copie exatamente a mensagem final ou mande print que eu te guio.
+
+Vai fundo agora — digite A e me diga o que apareceu no final 💪
+</pre>
+
+<pre>
+    terminou segue imagem, mas testei no browser e continua o loop
+
+Excelente, isso ajuda MUITO 👍
+A instalação deu certo, mas agora temos dois problemas claros no log — e eles explicam perfeitamente o loop de login no browser.
+
+Vamos por partes, bem direto.
+
+✅ O que deu CERTO (importante!)
+
+Pelo log:
+
+✔ ORDS foi instalado com sucesso
+✔ ORDS foi integrado ao APEX
+✔ Usuário APEX_PUBLIC_USER configurado
+✔ Container correto: XEPDB1
+
+Isso aqui é ouro — você já passou da parte difícil 🥇
+
+❌ O PROBLEMA REAL (está explícito no log)
+
+Linha crítica:
+
+SEVERE: Não foi possível iniciar o modo Standalone porque a porta de listening: 8080 já está sendo usada por outro processo.
+
+
+👉 Conclusão direta:
+A porta 8080 já está ocupada (provavelmente por:
+
+Tomcat
+
+Outro ORDS antigo
+
+Algum serviço Java
+
+Ou até outro teste anterior do próprio ORDS)
+
+Quando isso acontece:
+
+ORDS não sobe
+
+O browser até abre algo
+
+Mas o APEX entra em loop infinito de login
+
+⚠️ Isso NÃO é erro de usuário/senha
+⚠️ É erro de infraestrutura (porta)
+
+🔧 SOLUÇÃO 1 (a mais simples e recomendo)
+👉 Mudar a porta do ORDS para 8081
+
+No Prompt de Comando, na pasta onde está o ords.war, execute:
+
+java -jar ords.war config set standalone.http.port 8081
+
+
+Depois, inicie o ORDS manualmente:
+
+java -jar ords.war serve
+
+
+Você deve ver algo como:
+
+HTTP and HTTP/2 listening on host: 0.0.0.0 port: 8081
+
+🌐 Teste no navegador
+
+Abra exatamente:
+
+http://localhost:8081/ords
+
+
+Ou direto no APEX:
+
+http://localhost:8081/ords/apex
+
+🔐 Login correto do APEX
+
+⚠️ Atenção aqui (muita gente erra):
+
+Workspace: INTERNAL
+
+Usuário: ADMIN
+
+Senha: a que você definiu no apxchpwd.sql
+
+👉 Não é SYS
+👉 Não é SYSTEM
+👉 É ADMIN do APEX
+
+🔧 SOLUÇÃO 2 (opcional, se quiser manter 8080)
+
+Se você faz questão da porta 8080, dá pra descobrir quem está usando:
+
+netstat -ano | findstr :8080
+
+
+Depois:
+
+tasklist | findstr <PID>
+
+
+Mas, sinceramente?
+👉 Trocar pra 8081 é mais rápido e limpo, especialmente pra ambiente pequeno (seu caso 👍).
+
+✅ Próximo passo (me diga)
+
+Depois de rodar:
+
+java -jar ords.war serve
+
+
+me diga exatamente:
+
+Qual URL você acessou
+
+Se ainda aparece loop ou se abriu a tela do APEX
+
+Estamos a um passo de ver o APEX funcionando 🚀
+</pre>
+
+<pre>
+    abri direto no apex aparece uma tela informando que o ords não esta conectado com o db, pois o usuario esta bloqueado, rtto ora-28000
+
+Perfeito — agora ficou cristalino o problema 👍
+Esse erro ORA-28000 é clássico e 100% normal depois da instalação.
+
+👉 Resumo rápido:
+O ORDS está funcionando, mas o usuário de runtime do ORDS está BLOQUEADO no banco.
+Por isso ele não consegue se conectar ao Oracle → APEX não carrega.
+
+Vamos resolver em 2 minutos.
+
+🔴 O erro explicado (sem mistério)
+ORA-28000: the account is locked
+
+
+O usuário afetado normalmente é um destes:
+
+ORDS_PUBLIC_USER
+
+APEX_PUBLIC_USER
+
+APEX_LISTENER
+
+APEX_REST_PUBLIC_USER
+
+No seu caso, pelo log do ORDS, o principal é:
+👉 ORDS_PUBLIC_USER
+
+Durante a instalação, o Oracle cria mas deixa bloqueado, esperando você liberar manualmente (segurança).
+
+✅ SOLUÇÃO DEFINITIVA (faça exatamente assim)
+1️⃣ Conecte como SYS no container correto
+
+No SQL Developer:
+
+Usuário: SYS
+
+Papel: SYSDBA
+
+Container: XEPDB1
+
+Depois execute:
+
+ALTER SESSION SET CONTAINER = XEPDB1;
+
+2️⃣ Desbloquear os usuários do APEX/ORDS
+
+Execute todos, sem medo:
+
+ALTER USER ORDS_PUBLIC_USER ACCOUNT UNLOCK;
+ALTER USER APEX_PUBLIC_USER ACCOUNT UNLOCK;
+ALTER USER APEX_LISTENER ACCOUNT UNLOCK;
+ALTER USER APEX_REST_PUBLIC_USER ACCOUNT UNLOCK;
+
+
+Agora defina senha nova para o ORDS (obrigatório):
+
+ALTER USER ORDS_PUBLIC_USER IDENTIFIED BY Ords#2026;
+
+
+(Se quiser outra senha, ok — só use letra + número + caractere especial)
+
+3️⃣ Garantir que não vão bloquear de novo
+
+Execute:
+
+ALTER PROFILE DEFAULT LIMIT FAILED_LOGIN_ATTEMPTS UNLIMITED;
+
+
+(Em ambiente pequeno/local isso é totalmente aceitável)
+
+🔄 Reiniciar o ORDS
+
+No Prompt (onde você rodou o ORDS):
+
+Pare o processo (Ctrl + C)
+
+Suba novamente:
+
+java -jar ords.war serve
+
+
+Confirme que aparece algo como:
+
+HTTP listening on port 8081
+
+🌐 Teste final no navegador
+
+Abra:
+
+http://localhost:8081/ords/apex
+
+
+Login:
+
+Workspace: INTERNAL
+
+Usuário: ADMIN
+
+Senha: a que você definiu no apxchpwd.sql
+
+✅ Se tudo der certo (spoiler: vai dar 😄)
+
+Você verá:
+
+Tela inicial do Oracle APEX
+
+Acesso ao App Builder
+
+Ambiente pronto para criar sua aplicação de vendas 🚀
+
+Próximo passo (me diga)
+
+Assim que entrar no APEX, te ajudo a:
+1️⃣ Criar o workspace do seu negócio
+2️⃣ Conectar às tabelas fv_tb_*
+3️⃣ Montar a primeira tela de vendas (sem código)
+
+Me diga: a tela de login abriu corretamente agora?
+</pre>
+
+<pre>
+    Retornou esta mensagem: User ORDS_PUBLIC_USER alterado.
+
+
+User APEX_PUBLIC_USER alterado.
+
+Erro a partir da linha : 15 no comando -
+ALTER USER APEX_LISTENER ACCOUNT UNLOCK
+Relatório de erros -
+ORA-01918: o usuário 'APEX_LISTENER' não existe
+
+https://docs.oracle.com/error-help/db/ora-01918/01918. 00000 -  "user '%s' does not exist"
+*Cause:    The specified user did not exist in the system.
+*Action:   Verify the user name is correct by querying ALL_USERS view.
+*Params:   1) Name
+Erro a partir da linha : 16 no comando -
+ALTER USER APEX_REST_PUBLIC_USER ACCOUNT UNLOCK
+Relatório de erros -
+ORA-01918: o usuário 'APEX_REST_PUBLIC_USER' não existe
+
+https://docs.oracle.com/error-help/db/ora-01918/01918. 00000 -  "user '%s' does not exist"
+*Cause:    The specified user did not exist in the system.
+*Action:   Verify the user name is correct by querying ALL_USERS view.
+*Params:   1) Name
+
+Perfeito 👍 — isso NÃO é erro de verdade, é só informação. Você está no caminho certo.
+
+Vamos por partes, bem claro.
+
+✅ O que aconteceu (tradução humana)
+
+Essas mensagens:
+
+ORA-01918: o usuário 'APEX_LISTENER' não existe
+ORA-01918: o usuário 'APEX_REST_PUBLIC_USER' não existe
+
+
+👉 Não é problema nenhum.
+
+No Oracle XE + APEX mais novo + ORDS, esses usuários nem sempre existem.
+Dependendo da versão, o APEX usa apenas:
+
+ORDS_PUBLIC_USER ✅
+
+APEX_PUBLIC_USER ✅
+
+E esses foram desbloqueados com sucesso, como você mostrou:
+
+User ORDS_PUBLIC_USER alterado.
+User APEX_PUBLIC_USER alterado.
+
+
+✔️ Até aqui: 100% correto.
+
+🔒 Agora o ponto CRÍTICO (muito importante)
+
+Você ainda precisa garantir a senha do ORDS_PUBLIC_USER, porque o ORDS usa esse usuário para conectar no banco.
+
+Execute exatamente isto (no XEPDB1, como SYSDBA):
+
+ALTER USER ORDS_PUBLIC_USER IDENTIFIED BY Ords#2026;
+
+
+Se já executou, ótimo. Se não, execute agora.
+
+🔍 (Opcional, mas bom) Ver quem realmente existe
+
+Só para confirmar:
+
+SELECT username
+FROM dba_users
+WHERE username LIKE 'APEX%'
+   OR username LIKE 'ORDS%';
+
+
+Isso te mostra apenas os usuários reais do seu ambiente.
+
+🔄 Passo obrigatório: reiniciar o ORDS
+
+Isso é essencial, senão ele continua tentando conectar com credenciais antigas.
+
+No Prompt onde o ORDS está rodando:
+
+Pare tudo
+
+Ctrl + C
+
+
+Suba novamente:
+
+java -jar ords.war serve
+
+
+Espere aparecer algo parecido com:
+
+HTTP listening on port 8080
+
+
+ou
+
+HTTP listening on port 8081
+
+
+(Use a porta que aparecer no log)
+
+🌐 Teste no navegador
+
+Abra EXATAMENTE:
+
+http://localhost:8080/ords/apex
+
+
+ou
+
+http://localhost:8081/ords/apex
+
+
+Login:
+
+Workspace: INTERNAL
+
+Usuário: ADMIN
+
+Senha: a que você definiu no apxchpwd.sql
+
+⚠️ Importante:
+Se ficar em loop de login, limpe cache do navegador ou abra em aba anônima.
+
+🟢 Se ainda der loop (plano B garantido)
+
+Execute mais este comando:
+
+ALTER USER ORDS_PUBLIC_USER ACCOUNT UNLOCK;
+
+
+E reinicie o ORDS novamente.
+
+🧠 Contexto rápido (pra você entender o todo)
+
+Live SQL → estudo
+
+Oracle XE + APEX + ORDS → ambiente profissional
+
+Você agora está exatamente no setup usado em empresas pequenas
+
+Isso já te coloca um nível acima de iniciante, sério mesmo 👏
+
+Me diga agora:
+
+👉 Qual URL você está usando no navegador e o que aparece exatamente?
+Se quiser, pode copiar a mensagem da tela do APEX aqui que eu resolvo na próxima resposta.
+</pre>
+
+<pre>
+    não entendi como reinicio o ords?
+
+Tranquilo 😄 isso confunde mesmo no começo. Vamos bem passo a passo, sem pular nada.
+
+Você está usando ORDS em modo Standalone, então ele roda no Prompt de Comando, não como serviço do Windows.
+
+🔴 COMO PARAR O ORDS (reiniciar = parar + subir de novo)
+1️⃣ Vá para a janela do Prompt onde o ORDS está rodando
+
+É aquela tela preta onde apareceu algo como:
+
+HTTP and HTTP/2 cleartext listening on host: 0.0.0.0 port: 8080
+
+
+👉 Clique nessa janela
+
+2️⃣ Pare o ORDS
+
+No teclado, pressione:
+
+Ctrl + C
+
+
+Você verá algo como:
+
+^C
+
+
+Isso encerra o ORDS.
+Se o prompt voltou para algo tipo:
+
+R:\Oracle\ords>
+
+
+✔️ ORDS está parado.
+
+🟢 COMO INICIAR O ORDS NOVAMENTE
+
+Ainda no mesmo Prompt:
+
+3️⃣ Vá para a pasta onde está o ords.war
+
+Exemplo (ajuste se for diferente):
+
+cd R:\Oracle\ords
+
+
+Confirme que o arquivo existe:
+
+dir ords.war
+
+4️⃣ Suba o ORDS
+
+Execute:
+
+java -jar ords.war serve
+
+
+Aguarde.
+
+Quando aparecer algo parecido com:
+
+HTTP listening on port 8080
+
+
+ou
+
+HTTP listening on port 8081
+
+
+✔️ ORDS está rodando novamente.
+
+🌐 Teste no navegador
+
+Abra:
+
+http://localhost:8080/ords/apex
+
+
+(se a porta for outra, use a que apareceu no log)
+
+⚠️ DICAS IMPORTANTES
+
+Não feche o Prompt enquanto estiver usando o APEX
+
+Sempre que mudar senha de usuário ORDS/APEX → precisa reiniciar
+
+Loop de login? → teste aba anônima
+
+🧠 Resumo ultra-rápido
+
+ORDS não é serviço do Windows
+
+Ele roda no Prompt
+
+Ctrl + C → para
+
+java -jar ords.war serve → inicia
+
+👉 Agora me diga:
+Quando você rodar de novo, qual porta aparece no log?
+Com isso eu confirmo o URL exato pra você acessar.
+</pre>
+
+<pre>
+    ok retornou isso 2026-02-06T22:04:06.803Z INFO        HTTP and HTTP/2 cleartext listening on host: 0.0.0.0 port: 8081
+2026-02-06T22:04:06.887Z INFO        Disabling document root because the specified folder does not exist: R:\Oracle\ords\global\doc_root
+2026-02-06T22:04:06.888Z INFO        Default forwarding from / to contextRoot configured.
+2026-02-06T22:04:20.704Z WARNING     The pool named: |default|lo| is invalid and will be ignored: oracle.dbtools.common.jdbc.ConnectionPoolConfigurationException: O ORDS nÒo conseguiu fazer uma conexÒo com o banco de dados. O nome ou a senha do usußrio do banco de dados especificado pela definiþÒo de configuraþÒo db.username Ú invßlido(a). O pool de conex§es denominado: |default|lo| tinha o(s) seguinte(s) erro(s): ORA-01017: senha/nome do usußrio invßlido; log-on negado
+
+https://docs.oracle.com/error-help/db/ora-01017/
+2026-02-06T22:04:20.705Z INFO
+
+Mapped local pools from R:\Oracle\ords\databases:
+  /ords/                              => default                        => INVALID
+
+
+2026-02-06T22:04:20.729Z INFO        Oracle REST Data Services initialized
+Oracle REST Data Services version : 25.4.0.r3641739
+Oracle REST Data Services server info: jetty/12.0.25
+Oracle REST Data Services java info: OpenJDK Client VM Zulu17.38+21-CA (build 17.0.5+8-LTS mixed mode, emulated-client)
+
+Perfeito, agora ficou claríssimo 👍
+Você avançou bastante — o ORDS subiu, mas não consegue logar no banco.
+
+Vamos resolver isso de forma segura e definitiva.
+
+🔴 O QUE ESSE ERRO SIGNIFICA (traduzindo)
+
+Trecho chave do log:
+
+ORA-01017: senha/nome do usuário inválido; log-on negado
+db.username inválido
+pool default => INVALID
+
+
+👉 O ORDS está tentando conectar no banco com um usuário errado ou senha errada.
+
+Normalmente é UM destes:
+
+ORDS_PUBLIC_USER
+
+APEX_PUBLIC_USER
+
+Como você já desbloqueou usuários, o problema agora é senha desatualizada no ORDS.
+
+👉 Solução correta:
+🔁 reconfigurar o ORDS para ele gravar a senha certa.
+
+✅ SOLUÇÃO DEFINITIVA (faça exatamente nessa ordem)
+1️⃣ Pare o ORDS
+
+No Prompt onde ele está rodando:
+
+Ctrl + C
+
+
+Espere voltar para:
+
+R:\Oracle\ords>
+
+2️⃣ Conecte no banco como SYS
+
+No SQL Developer, conexão:
+
+Usuário: sys
+
+Papel: SYSDBA
+
+Container: XEPDB1
+
+Execute tudo isso:
+
+ALTER SESSION SET CONTAINER = XEPDB1;
+
+ALTER USER ORDS_PUBLIC_USER IDENTIFIED BY ords123 ACCOUNT UNLOCK;
+ALTER USER APEX_PUBLIC_USER IDENTIFIED BY apex123 ACCOUNT UNLOCK;
+
+COMMIT;
+
+
+👉 Anota:
+
+ORDS_PUBLIC_USER → ords123
+
+APEX_PUBLIC_USER → apex123
+
+3️⃣ Reconfigurar o ORDS (passo MAIS IMPORTANTE)
+
+No Prompt:
+
+cd R:\Oracle\ords
+java -jar ords.war config
+
+
+Quando aparecer perguntas, responda assim 👇
+
+Conexão com o banco
+Tipo de conexão: 1
+Host: localhost
+Porta: 1521
+Service name: xepdb1
+
+Usuário administrador
+Usuário admin: sys
+Senha: (senha do SYS)
+Conectar como SYSDBA? y
+
+Usuário runtime ORDS
+
+Quando pedir senha do ORDS_PUBLIC_USER:
+
+Senha: ords123
+
+
+Quando perguntar se quer gerar senha:
+
+n
+
+
+Aceite as opções padrão e confirme Aceitar e Continuar.
+
+👉 Isso grava a senha correta no ORDS.
+
+4️⃣ Suba o ORDS novamente
+java -jar ords.war serve
+
+
+Espere aparecer algo como:
+
+HTTP listening on port 8081
+Mapped local pools => VALID
+
+
+⚠️ IMPORTANTE:
+Se aparecer VALID, deu certo.
+Se aparecer INVALID, me avise.
+
+🌐 Acessar o APEX
+
+Abra no navegador:
+
+http://localhost:8081/ords/apex
+
+
+Use:
+
+Usuário: ADMIN
+
+Senha: a que você definiu no apxchpwd.sql
+
+👉 Use aba anônima para evitar loop de login.
+
+🧠 O que você acabou de aprender (nível profissional)
+
+✔ ORDS guarda senha internamente
+✔ Se a senha do usuário muda → ORDS quebra
+✔ Reconfigurar (ords.war config) é o jeito certo
+✔ Loop de login quase sempre é ORDS + senha errada
+
+👉 Próximo passo (quando isso abrir)
+
+Se o APEX abrir:
+
+Criamos o Workspace da Pizzaria
+
+Conectamos às suas tabelas (fv_tb_*)
+
+Começamos a tela de vendas 🍕
+
+Me diga:
+👉 O pool apareceu como VALID ou INVALID agora?
+</pre>
+
+<pre>
+    resposta do prompt: R:\Oracle\ords>java -jar ords.war config
+Advertência: O suporte para executar: java -jar ords.war está obsoleto.
+Adicione ords ao seu PATH e use o comando ords.
+2026-02-06T22:24:56.075Z WARNING     Sua pasta de configuraþÒo R:\Oracle\ords estß localizada na pasta do produto ORDS. A Oracle recomenda usar outra pasta de configuraþÒo.
+Consulte a DocumentaþÒo do Oracle REST Data Services para saber como instalar sua pasta de configuraþÒo.
+
+ORDS: Versão 25.4 Produção em sex. fev. 06 19:24:56 2026
+
+Copyright (c) 2010, 2026, Oracle.
+
+Configuração:
+  R:\Oracle\ords
+
+
+Uso:
+  ords config [OPTIONS] [COMMAND]
+
+Configurar definições do aplicativo e do pool de conexões de bancos de
+dados
+
+Opções:
+        --db-pool <string>       O nome do pool de conexões de bancos de dados
+                                 a ser configurado
+
+    -h, --help                   Mostrar informações de uso do comando
+
+        --quiet                  Oculta informações de banner, copyright e
+                                 local da configuração.
+
+Comandos:
+        delete                   Remover a definição de configuração
+                                 especificada
+
+        get                      Mostra o valor da definição de configuração
+                                 especificada. Os valores confidenciais serão
+                                 substituídos por: ******
+
+        info                     Descrever a definição de configuração
+                                 especificada
+
+        list                     Lista todas as definições globais e pool
+                                 configurado explicitamente
+
+        secret                   Armazene de modo seguro uma definição de
+                                 configuração confidencial, como: db.password
+
+        set                      Determina a definição de configuração para o
+                                 valor especificado. Não é possível definir
+                                 valores confidenciais usando esse método; use
+                                 em seu lugar o comando secret
+
+        user                     Crie ou atualize um usuário e sua senha e
+                                 atribuições. Exiba as informações do usuário.
+
+        verify                   Validar a conexão do pool de banco de dados
+                                 especificado
+
+
+
+R:\Oracle\ords>
+
+Perfeito — essa resposta é ótima notícia 😄
+Ela só mudou o jeito de configurar, não é erro.
+
+Você está usando ORDS 25, e a partir dessa versão o comando não é mais java -jar ords.war, agora é ords direto. Vamos ajustar 👇
+
+✅ O QUE ISSO SIGNIFICA
+
+ORDS está instalado corretamente
+
+Ele já criou a pasta de configuração
+
+Agora precisamos corrigir a senha do banco no pool default
+
+🎯 OBJETIVO AGORA
+
+Atualizar:
+
+db.username
+db.password
+
+
+do pool default para o usuário correto (ORDS_PUBLIC_USER).
+
+🔴 PASSO 1 — Descobrir qual usuário o ORDS está usando
+
+No Prompt:
+
+ords config list
+
+
+Se aparecer algo como:
+
+db.username = ORDS_PUBLIC_USER
+
+
+Perfeito.
+Se aparecer outro usuário, me diga qual.
+
+🔴 PASSO 2 — Corrigir a senha (ESSENCIAL)
+
+Vamos gravar a senha corretamente no ORDS.
+
+Execute:
+
+ords config secret db.password
+
+
+Quando pedir:
+
+Enter the secret value:
+
+
+Digite exatamente:
+
+ords123
+
+
+(confirme a senha quando pedir)
+
+👉 Isso grava a senha do ORDS_PUBLIC_USER.
+
+🔴 PASSO 3 — Verificar conexão do pool
+
+Agora teste se o ORDS consegue logar no banco:
+
+ords config verify
+
+Resultado esperado:
+Status: VALID
+
+
+✔️ Se aparecer VALID, estamos prontos.
+❌ Se aparecer INVALID, copie a mensagem pra mim.
+
+🔴 PASSO 4 — Reiniciar o ORDS
+
+Pare se estiver rodando:
+
+Ctrl + C
+
+
+Suba novamente:
+
+ords serve
+
+
+Espere aparecer algo como:
+
+Mapped local pools => VALID
+HTTP listening on port 8081
+
+🌐 TESTE FINAL NO NAVEGADOR
+
+Abra aba anônima e acesse:
+
+http://localhost:8081/ords/apex
+
+
+Login:
+
+Usuário: ADMIN
+
+Senha: a que você definiu no apxchpwd.sql
+
+🧠 IMPORTANTE (conceito-chave)
+
+ords config secret → senha
+
+ords config set → config normal
+
+Sempre que trocar senha no banco → repetir secret
+
+👉 Agora me diga:
+
+1️⃣ O que apareceu em ords config list (principalmente db.username)
+2️⃣ O resultado de ords config verify
+
+Com isso eu te levo até a tela do APEX aberta 🚀🍕
+</pre>
+
+<pre>
+    R:\Oracle\ords>ords config list
+'ords' não é reconhecido como um comando interno
+ou externo, um programa operável ou um arquivo em lotes.
+
+Perfeito — agora achamos o último bloqueio real 👍
+Isso é bem comum no Windows.
+
+👉 O ORDS não está no PATH, então o comando ords não é reconhecido.
+Vamos resolver sem complicação.
+
+✅ OPÇÃO MAIS RÁPIDA (recomendada agora)
+1️⃣ Vá para a pasta onde está o ORDS
+
+No Prompt:
+
+cd R:\Oracle\ords
+
+
+Confirme:
+
+dir
+
+
+Você deve ver algo como:
+
+ords.war
+bin
+config
+
+2️⃣ Execute o ORDS usando o binário correto
+
+Agora use:
+
+bin\ords config list
+
+
+💡 Isso é o mesmo que ords, só que com o caminho explícito.
+
+🔴 SE FUNCIONAR (o esperado)
+
+Vai aparecer algo parecido com:
+
+db.username = ORDS_PUBLIC_USER
+db.hostname = localhost
+db.port = 1521
+db.servicename = xepdb1
+
+
+👉 Copie principalmente o db.username pra mim.
+
+🔴 PASSO SEGUINTE (senha)
+
+Depois disso, execute:
+
+bin\ords config secret db.password
+
+
+Digite:
+
+ords123
+
+🔴 Teste do pool
+bin\ords config verify
+
+
+Esperado:
+
+Status: VALID
+
+🧠 (Opcional, mas profissional)
+
+Depois que tudo funcionar, dá pra adicionar ao PATH e usar só ords.
+Mas por agora, não precisa.
+
+👉 Me diga agora:
+
+O que apareceu quando você rodou:
+
+bin\ords config list
+
+
+Estamos a 1 passo de ver o APEX abrir 👌
+</pre>
+
+<pre>
+    R:\Oracle\ords>bin\ords config list
+
+ORDS: Versão 25.4 Produção em sex. fev. 06 22:37:18 2026
+
+Copyright (c) 2010, 2026, Oracle.
+
+Configuração:
+  R:\Oracle\ords
+
+Pool do banco de dados: default
+
+Definição                            Valor                                    Origem
+----------------------------------   --------------------------------------   --------------
+database.api.enabled                 true                                     Global
+db.connectionType                    basic                                    Pool
+db.hostname                          localhost                                Pool
+db.password                          ******                                   Wallet do Pool
+db.port                              1521                                     Pool
+db.servicename                       xepdb1                                   Pool
+db.username                          ORDS_PUBLIC_USER                         Pool
+feature.sdw                          true                                     Pool
+plsql.gateway.mode                   proxied                                  Pool
+restEnabledSql.active                true                                     Pool
+security.requestValidationFunction   wwv_flow_epg_include_modules.authorize   Pool
+standalone.doc.root                  R:\Oracle\ords\global\doc_root           Global
+standalone.http.port                 8081                                     Global
+
+
+R:\Oracle\ords>bin\ords config secret db.password
+
+ORDS: Versão 25.4 Produção em sex. fev. 06 22:40:16 2026
+
+Copyright (c) 2010, 2026, Oracle.
+
+Configuração:
+  R:\Oracle\ords
+
+Digite a senha do banco de dados:
+Confirmar senha:
+A definição chamada: db.password foi feita com o valor: ****** na configuração: default
+
+R:\Oracle\ords>bin\ords config verify
+
+ORDS: Versão 25.4 Produção em sex. fev. 06 22:42:24 2026
+
+Copyright (c) 2010, 2026, Oracle.
+
+Configuração:
+  R:\Oracle\ords
+
+Pool de banco de dados default:
+Estado da conexão: válida
+Versão do ORDS instalada no banco de dados: 25.4.0.r3641739
+
+R:\Oracle\ords>
+
+🎉 PERFEITO! AGORA DEU 100% CERTO. 🎉
+Esse resultado é exatamente o que a gente queria ver.
+
+Olha o trecho mágico 👇
+
+Estado da conexão: válida
+Versão do ORDS instalada no banco de dados: 25.4.0
+
+
+👉 Isso confirma:
+
+ORDS conectado corretamente ao banco
+
+Usuário ORDS_PUBLIC_USER OK
+
+Senha correta
+
+Pool VALID
+
+APEX acessível
+
+Agora é só subir o ORDS e abrir no navegador.
+
+🔁 ÚLTIMO RESTART (só pra garantir)
+
+Se o ORDS ainda estiver rodando, pare com:
+
+Ctrl + C
+
+
+Depois suba novamente:
+
+bin\ords serve
+
+
+Espere aparecer:
+
+HTTP listening on port 8081
+Mapped local pools => VALID
+
+🌐 ACESSO FINAL AO APEX
+
+Abra aba anônima no Chrome ou Edge e acesse:
+
+http://localhost:8081/ords/apex
+
+
+Login:
+
+Usuário: ADMIN
+
+Senha: a que você definiu no apxchpwd.sql
+
+Se abrir a tela inicial do APEX → missão cumprida 🏆
+
+🧠 O que você acabou de conquistar (isso é nível profissional)
+
+Você agora sabe:
+✔ Instalar Oracle XE
+✔ Ajustar listener / tns
+✔ Entender CDB / PDB (XEPDB1)
+✔ Instalar APEX corretamente
+✔ Configurar ORDS moderno (25+)
+✔ Resolver loop de login
+✔ Validar pool de conexão
+
+Isso não é básico — parabéns mesmo 👏
+
+🍕 PRÓXIMO PASSO: PIZZARIA NA PRÁTICA
+
+Se o APEX abrir, no próximo passo a gente vai:
+
+1️⃣ Criar o Workspace da Pizzaria
+2️⃣ Conectar às tabelas fv_tb_produtos, fv_tb_vendas, etc
+3️⃣ Criar:
+
+Tela de cadastro de produtos
+
+Tela de vendas
+
+Baixa automática de estoque
+
+Relatório de faturamento diário
+
+👉 Me diga:
+
+✅ O APEX abriu?
+
+Ou mande um print da tela que aparece agora
+
+Daqui pra frente é só construção visual 🚀🍕
+</pre>
+
+<pre>
+    o apex mostrou uma mensagem: There is a problem with your environment because the Application Express files have not been loaded. Please verify that you have copied the images directory to your application server as instructed in the Installation Guide. In addition, please verify that your image prefix path is correct. Your current path is /i/ (it should contain both starting and ending forward slashes, such as the default /i/). Use the SQL script reset_image_prefix.sql if you need to change it.  Depois abriu mas sem leiout" so textos: Oracle Application Express
+Workspace
+Workspace
+Username
+Username
+Password
+Password
+Remember Workspace and Username
+Remember workspace and username
+Help Text: Remember Workspace and Username
+Sign In
+Reset Password
+Getting Started
+Learn More
+A page for those just getting started or wanting to learn more about Oracle Application Express.
+
+apex.oracle.com
+A free, hosted service where you can try out the latest version of Oracle Application Express.
+
+Oracle Learning Library
+Oracle by Examples (OBEs) provide prerequisite files and step-by-step instructions with screen shots that walk you through building various application components.
+
+More Information --- e o prompt esta parado apos o ultimo comando: R:\Oracle\ords>bin\ords serve
+
+ORDS: Versão 25.4 Produção em sex. fev. 06 22:47:13 2026
+
+Copyright (c) 2010, 2026, Oracle.
+
+Configuração:
+  R:\Oracle\ords
+
+2026-02-06T22:47:16.208Z INFO        HTTP and HTTP/2 cleartext listening on host: 0.0.0.0 port: 8081
+2026-02-06T22:47:16.307Z INFO        Disabling document root because the specified folder does not exist: R:\Oracle\ords\global\doc_root
+2026-02-06T22:47:16.310Z INFO        Default forwarding from / to contextRoot configured.
+2026-02-06T22:47:25.520Z INFO        Configuration properties for: |default|lo|
+db.connectionType=basic
+db.hostname=localhost
+db.port=1521
+db.servicename=xepdb1
+db.username=ORDS_PUBLIC_USER
+feature.sdw=true
+plsql.gateway.mode=proxied
+restEnabledSql.active=true
+security.requestValidationFunction=wwv_flow_epg_include_modules.authorize
+database.api.enabled=true
+standalone.doc.root=R:\Oracle\ords\global\doc_root
+standalone.http.port=8081
+file.encoding=Cp1252
+file.separator=\
+java.class.path=R:\Oracle\ords\bin\..\ords.war
+java.class.version=61.0
+java.home=R:\Program Files\Java\zulu17.38.21-ca-jdk17.0.5-win_i686
+java.io.tmpdir=C:\Users\vieir\AppData\Local\Temp\
+java.library.path=R:\Program Files\Java\zulu17.38.21-ca-jdk17.0.5-win_i686\bin;C:\Windows\Sun\Java\bin;C:\Windows\system32;C:\Windows;R:\Oracle\product\18.0.0\dbhomeXE\bin;C:\Python310\Scripts\;C:\Python310\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;R:\Program Files\Java\zulu17.38.21-ca-jdk17.0.5-win_i686\bin;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;R:\Trabalho - Coding\Git\cmd;C:\Program Files\dotnet\;R:\Program Files\dotnet\;C:\Users\vieir\AppData\Local\Programs\Python\Python39\Scripts\;R:\Program Files\nodejs\;C:\ProgramData\chocolatey\bin;C:\Program Files (x86)\AMD\ATI.ACE\Core-Static;C:\Users\vieir\AppData\Local\Programs\Python\Python39\;C:\Users\vieir\AppData\Local\Microsoft\WindowsApps;C:\Users\vieir\AppData\Local\atom\bin;C:\Users\vieir\.dotnet\tools;R:\Trabalho - Coding\Microsoft VS Code\bin;C:\Users\vieir\AppData\Roaming\npm;R:\Program Files\Java\zulu17.38.21-ca-jdk17.0.5-win_i686\bin;.
+java.runtime.name=OpenJDK Runtime Environment
+java.runtime.version=17.0.5+8-LTS
+java.specification.name=Java Platform API Specification
+java.specification.vendor=Oracle Corporation
+java.specification.version=17
+java.vendor=Azul Systems, Inc.
+java.vendor.url=http://www.azul.com/
+java.vendor.url.bug=http://www.azul.com/support/
+java.vendor.version=Zulu17.38+21-CA
+java.version=17.0.5
+java.version.date=2022-10-18
+java.vm.info=mixed mode, emulated-client
+java.vm.name=OpenJDK Client VM
+java.vm.specification.name=Java Virtual Machine Specification
+java.vm.specification.vendor=Oracle Corporation
+java.vm.specification.version=17
+java.vm.vendor=Azul Systems, Inc.
+java.vm.version=17.0.5+8-LTS
+jdk.debug=release
+line.separator=
+
+nashorn.args=--no-deprecation-warning
+native.encoding=Cp1252
+oracle.dbtools.cmdline.ShellCommand=ords
+oracle.dbtools.cmdline.home=..
+oracle.dbtools.launcher.executable.jar.path=R:\Oracle\ords\ords.war
+os.arch=x86
+os.name=Windows 10
+os.version=10.0
+path.separator=;
+sun.arch.data.model=32
+sun.boot.library.path=R:\Program Files\Java\zulu17.38.21-ca-jdk17.0.5-win_i686\bin
+sun.cpu.endian=little
+sun.cpu.isalist=pentium_pro+mmx pentium_pro pentium+mmx pentium i486 i386 i86
+sun.io.unicode.encoding=UnicodeLittle
+sun.java.command=R:\Oracle\ords\bin\..\ords.war serve
+sun.java.launcher=SUN_STANDARD
+sun.jnu.encoding=Cp1252
+sun.management.compiler=HotSpot Client Compiler
+sun.os.patch.level=
+sun.stderr.encoding=cp850
+sun.stdout.encoding=cp850
+user.country=BR
+user.dir=R:\Oracle\ords
+user.home=C:\Users\vieir
+user.language=pt
+user.name=vieir
+user.script=
+user.timezone=UTC
+user.variant=
+db.password=******
+conf.use.wallet=true
+
+2026-02-06T22:47:25.532Z WARNING     *** jdbc.MaxLimit na configuraþÒo |default|lo| estß usando um valor de 10; esta definiþÒo nÒo pode ser dimensionada adequadamente para um ambiente de produþÒo ***
+2026-02-06T22:47:26.600Z INFO        Created Pool: |default|lo|-2026-02-06T22-47-24.102357800Z at: 2026-02-06T22:47:24.102357800Z
+2026-02-06T22:47:27.186Z INFO
+
+Mapped local pools from R:\Oracle\ords\databases:
+  /ords/                              => default                        => VALID
+
+
+2026-02-06T22:47:27.221Z INFO        Oracle REST Data Services initialized
+Oracle REST Data Services version : 25.4.0.r3641739
+Oracle REST Data Services server info: jetty/12.0.25
+Oracle REST Data Services java info: OpenJDK Client VM Zulu17.38+21-CA (build 17.0.5+8-LTS mixed mode, emulated-client)
+
+2026-02-06T22:48:48.113Z SEVERE      <YBHr4LrINDneBs8g2aMLDw> *** Error: Could not obtain a database connection because all connections in the pool: |default|lo| were in use. Borrowed Connections: 10 Available Connections: 0 Maximum Connections: 10 ***
+2026-02-06T22:49:10.378Z WARNING     <JdbsjlydzWwkvyERXzF9IA>
+** Request had db ELAPSED time of :27243ms **
+
+2026-02-06T22:49:10.378Z WARNING     <VtrIvR409sFcmSuX9msp4g>
+** Request had db ELAPSED time of :22051ms **
+
+2026-02-06T22:49:10.378Z WARNING     <hOPNFR56sy2NWTSRhRiGyA>
+** Request had db ELAPSED time of :24333ms **
+
+2026-02-06T22:49:10.380Z WARNING     <3BsrCVJ45Xk-Ll_E4JeiAQ>
+** Request had db ELAPSED time of :27530ms **
+
+2026-02-06T22:49:10.454Z WARNING     <MqlfKM1J7v0-VZLMaz0LZQ>
+** Request had db ELAPSED time of :24503ms **
+
+2026-02-06T22:49:57.661Z WARNING     <t7m2cOufOFF4-hvuquYhFA>
+** Request had db ELAPSED time of :43895ms **
+
+2026-02-06T22:49:57.667Z WARNING     <x9F8qB1xgPHXYqJPn5B7fw>
+** Request had db ELAPSED time of :16239ms ** -- antes havia solicitado a instalação do vm zulu mas eu cancelei isso é necessario, como instalo não foi mais solicitado.
+
+Respira 😄 — isso é 100% esperado e você já passou da parte difícil.
+Agora estamos no ajuste fino final do APEX + ORDS.
+
+Vou separar em 3 problemas claros e resolver um por um, sem bagunça.
+
+🧩 PROBLEMA 1 — APEX sem layout (CSS/imagens)
+Mensagem-chave:
+
+Application Express files have not been loaded
+Your current path is /i/
+
+👉 Diagnóstico:
+O APEX está instalado no banco, mas os arquivos estáticos (imagens, CSS, JS) não foram copiados para o ORDS.
+
+Isso causa:
+
+Tela só com texto
+
+Sem layout
+
+Login funciona, mas feio 😅
+
+✅ SOLUÇÃO CORRETA (OBRIGATÓRIA)
+1️⃣ Localize a pasta do APEX
+
+Onde você extraiu o APEX, deve existir algo como:
+
+apex/
+ ├── images/
+ ├── apexins.sql
+
+
+📌 IMPORTANTE: é a pasta images inteira, não só o conteúdo.
+
+2️⃣ Copie a pasta images
+
+Copie a pasta images para:
+
+R:\Oracle\ords\global\doc_root\i
+
+
+👉 O caminho final precisa ficar exatamente assim:
+
+R:\Oracle\ords\global\doc_root\i\apex_version.txt
+R:\Oracle\ords\global\doc_root\i\themes\
+R:\Oracle\ords\global\doc_root\i\css\
+
+
+⚠️ Se doc_root ou i não existir, crie manualmente.
+
+3️⃣ Reinicie o ORDS
+
+No Prompt:
+
+Ctrl + C
+
+
+Depois:
+
+bin\ords serve
+
+4️⃣ Teste novamente
+
+Abra aba anônima:
+
+http://localhost:8081/ords/apex
+
+
+✅ O layout deve aparecer normal, bonito, com ícones.
+
+🧩 PROBLEMA 2 — Erro “connections in the pool were in use”
+Mensagem:
+all connections in the pool were in use
+Maximum Connections: 10
+
+
+👉 Diagnóstico:
+Você ficou tentando abrir o APEX várias vezes antes do layout estar pronto, e o pool pequeno do ORDS saturou.
+
+💡 Não é erro grave, só configuração padrão.
+
+✅ SOLUÇÃO RÁPIDA (agora)
+
+Basta reiniciar o ORDS depois de corrigir as imagens.
+
+Ele libera todas as conexões automaticamente.
+
+✅ SOLUÇÃO PROFISSIONAL (opcional)
+
+Depois, podemos aumentar o pool:
+
+bin\ords config set jdbc.MaxLimit 30
+
+
+(Reinicia o ORDS depois)
+
+👉 Mas não é obrigatório agora.
+
+🧩 PROBLEMA 3 — Java Zulu (resposta direta)
+
+“Antes havia solicitado instalação do Zulu, cancelei, isso é necessário?”
+
+✅ RESPOSTA CURTA E SEGURA:
+
+NÃO precisa instalar nada agora.
+
+📌 Prova:
+
+Java info: OpenJDK Client VM Zulu17
+ORDS initialized
+Pool VALID
+
+
+👉 Você já está usando Java 17 funcional.
+Pode esquecer isso por enquanto.
+
+🧠 RESUMO DO ESTADO ATUAL (importante)
+
+✔ Banco OK
+✔ APEX instalado
+✔ ORDS conectado
+✔ Pool VALID
+❌ Só falta copiar a pasta images
+
+👉 Isso é o último passo técnico da instalação.
+
+🚀 PRÓXIMO PASSO (depois do layout aparecer)
+
+Assim que você confirmar que o APEX abriu com layout:
+
+1️⃣ Criamos o Workspace da Pizzaria
+2️⃣ Conectamos às tabelas fv_tb_*
+3️⃣ Primeira tela: Cadastro de Produtos
+4️⃣ Depois: Venda com baixa automática de estoque
+
+🍕💻
+
+👉 Me responda só isso:
+
+✅ O layout apareceu depois de copiar a pasta images?
+
+Se não, me diga onde está sua pasta apex no disco que eu te guio certinho.
+</pre>
+
+<pre>
+    o apex continua so texto, criei a pasta doc_root, copiei a pasta images do apex, reinicializei o ords, mas continua. me intriga o ords para quando chega no trecho: Mapped local pools from R:\Oracle\ords\databases:
+  /ords/                              => default                        => VALID
+
+
+2026-02-06T23:36:33.001Z INFO        Oracle REST Data Services initialized
+Oracle REST Data Services version : 25.4.0.r3641739
+Oracle REST Data Services server info: jetty/12.0.25
+Oracle REST Data Services java info: OpenJDK Client VM Zulu17.38+21-CA (build 17.0.5+8-LTS mixed mode, emulated-client)
+
+Excelente observação — sua intuição está certíssima 👌
+E já te adianto: o ORDS NÃO está travando. Ele termina ali mesmo de propósito.
+O problema do APEX só texto é 100% configuração de arquivos estáticos (/i).
+
+Vamos resolver isso com método, porque agora é detalhe fino.
+
+🧠 ENTENDENDO O PROBLEMA (importante)
+
+Você tem 3 peças que precisam bater exatamente:
+
+1️⃣ O APEX no banco
+2️⃣ O ORDS servindo arquivos estáticos
+3️⃣ O APEX apontando para o caminho certo (/i/)
+
+👉 Hoje:
+
+APEX está instalado ✅
+
+ORDS está rodando e conectado ✅
+
+Mas o ORDS NÃO está servindo corretamente a pasta /i ❌
+
+Por isso:
+
+A página abre
+
+Login aparece
+
+CSS/JS não carregam → só texto
+
+🔎 PRIMEIRA COISA: o ORDS NÃO “para” ali
+
+Esse trecho:
+
+Oracle REST Data Services initialized
+
+
+✔️ Significa: ORDS está rodando normalmente
+✔️ Ele fica parado esperando requisições
+✔️ Isso é o comportamento correto
+
+👉 Então pode tirar isso da cabeça: não é travamento.
+
+🧩 CAUSA REAL (essa é a chave)
+
+No seu log aparece:
+
+Disabling document root because the specified folder does not exist:
+R:\Oracle\ords\global\doc_root
+
+
+Mesmo você tendo criado depois, o ORDS gravou a configuração errada.
+
+👉 Ele não está usando sua pasta doc_root para servir /i.
+
+✅ SOLUÇÃO DEFINITIVA (faça exatamente assim)
+🔴 PASSO 1 — Confirme a estrutura correta
+
+No Windows Explorer, confirme que existe EXATAMENTE:
+
+R:\Oracle\ords\global\doc_root\i\
+
+
+Dentro de i, devem existir coisas como:
+
+apex_version.txt
+themes\
+css\
+js\
+
+
+⚠️ Não pode ficar:
+
+doc_root\images\i   ❌
+doc_root\apex\images ❌
+
+
+👉 Tem que ser doc_root\i
+
+🔴 PASSO 2 — Forçar o ORDS a usar o doc_root correto
+
+No Prompt:
+
+cd R:\Oracle\ords
+bin\ords config set standalone.doc.root R:\Oracle\ords\global\doc_root
+
+
+Confirme depois:
+
+bin\ords config get standalone.doc.root
+
+
+Tem que retornar:
+
+R:\Oracle\ords\global\doc_root
+
+🔴 PASSO 3 — Reiniciar o ORDS
+
+Muito importante agora:
+
+Ctrl + C
+
+
+Depois:
+
+bin\ords serve
+
+
+⚠️ OBSERVE O LOG
+👉 NÃO pode mais aparecer:
+
+Disabling document root because the specified folder does not exist
+
+
+Se aparecer, me diga.
+
+🔴 PASSO 4 — Corrigir o APEX no banco (imagem prefix)
+
+Mesmo estando /i/, vamos garantir.
+
+No SQL Developer, conectado como SYS:
+
+ALTER SESSION SET CONTAINER = XEPDB1;
+
+@R:\Oracle\apex\utilities\reset_image_prefix.sql
+
+
+Quando pedir:
+
+Enter the image prefix:
+
+
+Digite exatamente:
+
+/i/
+
+🔴 PASSO 5 — Limpeza final
+
+Feche todos os navegadores
+
+Abra aba anônima
+
+Acesse:
+
+http://localhost:8081/ords/apex
+
+✅ RESULTADO ESPERADO
+
+Agora você deve ver:
+
+Logo do APEX
+
+Tela estilizada
+
+Ícones
+
+Nada de “só texto”
+
+Se ainda aparecer só texto, aí já sei exatamente o próximo ponto (e é raro).
+
+🧠 CHECKLIST RÁPIDO (me responda isso)
+
+1️⃣ No log do ORDS ainda aparece
+Disabling document root? (sim/não)
+2️⃣ Confirma que existe:
+R:\Oracle\ords\global\doc_root\i\apex_version.txt
+
+Com isso eu fecho o diagnóstico em uma mensagem 🔧🚀
+</pre>
+
+<pre></pre>

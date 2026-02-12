@@ -1,0 +1,870 @@
+<pre>
+
+o sql developer apresentou falha, segue imagem 
+
+Perfeito você mandar a imagem 👍 — ela explica exatamente o que está acontecendo.
+Calma que isso é 100% comum na primeira instalação do Oracle no Windows. Não é erro seu.
+
+❌ O erro que aparece
+
+Na imagem dá pra ler:
+
+ORA-12541: TNS: não há listener em host localhost port 1521
+
+👉 Tradução humana:
+
+O banco existe, mas o serviço (listener) que aceita conexões não está rodando ou não está na porta certa.
+
+Isso é configuração/serviço, não SQL.
+
+✅ VAMOS RESOLVER PASSO A PASSO (ordem importa)
+🟢 PASSO 1 — Conferir os serviços do Oracle
+
+Aperte Windows + R
+
+Digite:
+
+services.msc
+
+
+Procure por serviços com nome parecido com:
+
+✅ OracleServiceXE
+
+✅ OracleXETNSListener
+ou
+
+OracleOraDB21cHome1TNSListener
+
+👉 O que verificar
+
+Eles precisam estar com Status = Running (Em execução)
+
+🔧 Se algum NÃO estiver rodando
+
+Clique com botão direito no serviço
+
+Clique em Start / Iniciar
+
+⚠️ Principalmente o Listener
+
+🟢 PASSO 2 — Ajustar o tipo de conexão no SQL Developer
+
+Na sua imagem, você marcou SID = xe.
+Dependendo da versão do XE, isso muda.
+
+🔁 Teste ASSIM (muito importante):
+🔹 Opção A (mais comum hoje)
+
+Tipo de conexão: Básico
+
+Host: localhost
+
+Porta: 1521
+
+☑️ Marque Nome do Serviço
+
+Nome do serviço:
+
+XEPDB1
+
+
+👉 Desmarque SID
+
+Clique em Testar.
+
+🔹 Opção B (se a A não funcionar)
+
+Tipo de conexão: Básico
+
+Host: localhost
+
+Porta: 1521
+
+☑️ SID
+
+SID:
+
+XE
+
+🟢 PASSO 3 — Testar o listener manualmente (garantia total)
+
+Abra o Prompt de Comando como administrador:
+
+Menu Iniciar → digite cmd
+
+Botão direito → Executar como administrador
+
+Digite:
+
+lsnrctl status
+
+Se aparecer algo como:
+STATUS of the LISTENER
+Listening on: (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=...)(PORT=1521)))
+
+
+👉 Listener está OK.
+
+Se der erro:
+lsnrctl start
+
+🟢 PASSO 4 — Conferir firewall (se ainda falhar)
+
+Raro, mas acontece.
+
+Libere a porta 1521
+
+Libere executáveis Oracle no firewall
+
+(Só fazemos isso se os passos acima não resolverem.)
+
+🎯 O QUE EU PRECISO DE VOCÊ AGORA
+
+Pra não ficar no “tentativa e erro”, me diga:
+
+1️⃣ No services.msc, quais serviços Oracle aparecem?
+2️⃣ Eles estão Running ou Stopped?
+3️⃣ Quando você testa com Nome do Serviço = XEPDB1, muda algo?
+
+Com essas respostas eu te digo exatamente o próximo ajuste.
+Isso aqui a gente resolve em poucos minutos 💪
+
+segue as imagens, ainda não resolveu
+
+Perfeito, agora deu pra diagnosticar com precisão 👍
+Obrigado pelas duas imagens — elas mostram exatamente onde está o problema.
+👉 Boa notícia: seu Oracle ESTÁ instalado.
+👉 Problema: o listener está ativo, mas o banco (PDB) não está aceitando conexão.
+
+Vamos resolver sem reinstalar nada.
+
+🔍 O QUE AS IMAGENS MOSTRAM (diagnóstico)
+✅ Serviços
+
+Você tem estes serviços EM EXECUÇÃO:
+
+OracleOraDB18Home1TNSListener ✅
+
+OracleServiceXE ✅
+
+👉 Ou seja: listener e banco existem.
+
+❌ Erro persistente
+ORA-12541: Não há listener em host localhost port 1521
+
+
+Isso acontece quando:
+
+o listener está rodando
+
+mas não está escutando o serviço correto (XEPDB1)
+
+No Oracle 18c/21c XE isso é MUITO comum.
+
+✅ SOLUÇÃO DEFINITIVA (PASSO A PASSO)
+🟢 PASSO 1 — Abrir Prompt como ADMINISTRADOR
+
+Muito importante.
+
+Menu Iniciar
+
+Digite cmd
+
+Botão direito → Executar como administrador
+
+🟢 PASSO 2 — Ver status real do listener
+
+No prompt, digite:
+
+lsnrctl status
+
+
+👉 Copie e leia com atenção:
+
+Procure algo como:
+
+Service "XEPDB1" has 1 instance(s)
+
+❌ Se NÃO aparecer XEPDB1
+
+É exatamente o problema.
+
+🟢 PASSO 3 — Forçar registro do banco no listener
+
+Ainda no prompt:
+
+sqlplus / as sysdba
+
+
+(Se pedir confirmação, aceita.)
+
+Depois rode exatamente nessa ordem:
+
+ALTER SYSTEM REGISTER;
+
+
+Depois:
+
+SHOW PDBS;
+
+
+Você deve ver algo como:
+
+XEPDB1   OPEN
+
+
+Se estiver MOUNTED ou CLOSED, rode:
+
+ALTER PLUGGABLE DATABASE XEPDB1 OPEN;
+
+
+Depois saia:
+
+EXIT;
+
+🟢 PASSO 4 — Reiniciar o listener (garantia)
+
+No prompt (ainda como admin):
+
+lsnrctl stop
+lsnrctl start
+
+
+Depois:
+
+lsnrctl status
+
+
+Agora TEM que aparecer:
+
+Service "XEPDB1"
+
+🟢 PASSO 5 — Ajustar SQL Developer (atenção aqui)
+
+Use EXATAMENTE assim:
+
+Tipo de Conexão: Básico
+
+Host: localhost
+
+Porta: 1521
+
+☑️ Nome do Serviço
+
+Nome do Serviço:
+
+XEPDB1
+
+
+Usuário: system
+
+Senha: a que você criou
+
+👉 Clique em Testar
+
+🎯 RESULTADO ESPERADO
+
+Se tudo foi feito corretamente, vai aparecer:
+
+Status: Success
+
+
+E você consegue conectar 🎉
+
+🧠 POR QUE ISSO ACONTECE (explicação curta)
+
+No Oracle XE moderno:
+
+O banco é multitenant
+
+O listener sobe primeiro
+
+O PDB (XEPDB1) às vezes não se registra sozinho
+
+Isso NÃO é erro seu.
+Isso derruba muita gente iniciante.
+
+🆘 SE AINDA NÃO FUNCIONAR
+
+Me diga exatamente:
+1️⃣ O que apareceu no lsnrctl status
+2️⃣ O resultado do SHOW PDBS
+3️⃣ Se deu erro em algum comando
+
+Com isso eu ajusto na mosca.
+Você está a 2 passos de ter seu banco profissional rodando 💪🍕
+
+Perfeito. Agora ficou cristalino o que está acontecendo — e é um detalhe clássico 👍
+Boa notícia: seu Oracle está 100% funcional. O erro não é banco, não é listener, não é instalação.
+
+🔍 O PROBLEMA REAL (achado na sua imagem)
+
+Veja esta linha do seu lsnrctl status:
+
+Estabelecendo conexão com (HOST=192.168.56.1)(PORT=1521)
+
+
+E mais abaixo:
+
+O serviço "xepdb1" ... status READY
+
+
+👉 Ou seja:
+
+✅ Listener está ATIVO
+
+✅ Serviço XEPDB1 está READY
+
+❌ NÃO está escutando em localhost
+
+✔️ Está escutando em 192.168.56.1
+
+Por isso o SQL Developer falha quando você usa localhost.
+
+✅ SOLUÇÃO IMEDIATA (1 minuto)
+👉 Ajuste no SQL Developer
+
+Troque apenas isso:
+
+❌ Errado (como estava)
+
+Host: localhost
+
+✅ Correto
+
+Host: 192.168.56.1
+
+Porta: 1521
+
+Tipo: Nome do Serviço
+
+Serviço: XEPDB1
+
+Usuário: system
+
+Senha: sua senha
+
+👉 Clique em Testar
+
+💥 Vai conectar.
+
+🧠 Por que isso aconteceu?
+
+Esse IP (192.168.56.1) é típico de:
+
+VirtualBox / Hyper-V
+
+Adaptador de rede virtual
+
+Oracle XE se registrou nesse IP automaticamente
+
+O listener não está ligado ao localhost, mas a um IP real da máquina.
+
+Isso é normal em Windows.
+
+🔧 OPÇÃO MAIS PROFISSIONAL (recomendada)
+
+Se quiser deixar “bonitinho” e profissional, você tem 2 caminhos:
+
+✔️ Opção A — Continuar usando o IP
+
+Funciona perfeitamente. Zero risco.
+
+✔️ Opção B — Ajustar para localhost (mais avançado)
+
+Depois, quando quiser, podemos:
+
+Ajustar listener.ora
+
+Ajustar tnsnames.ora
+
+Forçar bind em localhost
+
+👉 Não é necessário agora para o projeto da pizzaria.
+
+🎯 STATUS ATUAL DO SEU PROJETO
+
+✅ Oracle XE instalado
+✅ Listener funcionando
+✅ Banco aberto
+✅ PDB XEPDB1 ativo
+✅ Pronto para uso real
+🍕 Projeto da pizzaria pode seguir sem medo
+
+🚀 Próximo passo (se você topar)
+
+Sugestão de sequência:
+1️⃣ Criar usuário próprio da aplicação (ex: PIZZARIA_APP)
+2️⃣ Dar permissões corretas (sem usar SYSTEM no dia a dia)
+3️⃣ Criar procedure de venda completa
+4️⃣ Simular venda real (estoque ↓, faturamento ↑)
+
+Se quiser, me diga:
+👉 “Vamos criar o usuário da aplicação”
+ou
+👉 “Vamos direto para a procedure de venda”
+
+Você está indo muito bem — isso já é nível profissional 👏
+
+vamos Ajustar para localhost
+
+Perfeito 👍
+Vamos fazer isso do jeito certo e profissional, sem gambiarra. Vou te guiar passo a passo, e você só executa.
+
+👉 Objetivo: fazer o Oracle escutar em localhost (127.0.0.1) para o SQL Developer conectar sem IP.
+
+🧠 Visão geral do que vamos fazer
+
+1️⃣ Ajustar o listener.ora
+2️⃣ Ajustar o tnsnames.ora
+3️⃣ Reiniciar o listener
+4️⃣ Testar no SQL Developer
+
+Tudo isso é configuração, não mexe nos seus dados.
+
+📁 PASSO 1 — Abrir a pasta correta
+
+Abra o Explorador de Arquivos e vá até:
+
+R:\Oracle\product\18.0.0\dbhomeXE\network\admin
+
+
+Lá você verá arquivos como:
+
+listener.ora
+
+tnsnames.ora
+
+📝 PASSO 2 — Editar o listener.ora
+
+👉 Clique com botão direito em listener.ora
+👉 Abrir com → Bloco de Notas (como administrador)
+
+Ele deve estar parecido com isso (ou semelhante):
+
+LISTENER =
+  (DESCRIPTION_LIST =
+    (DESCRIPTION =
+      (ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.56.1)(PORT = 1521))
+    )
+  )
+
+🔧 O que você vai mudar
+
+Troque somente o HOST:
+
+HOST = localhost
+
+✅ Fica assim:
+LISTENER =
+  (DESCRIPTION_LIST =
+    (DESCRIPTION =
+      (ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521))
+    )
+  )
+
+
+💾 Salve o arquivo
+
+📝 PASSO 3 — Editar o tnsnames.ora
+
+Abra o arquivo tnsnames.ora.
+
+Procure algo parecido com XEPDB1.
+
+Provavelmente está assim:
+
+XEPDB1 =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.56.1)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVICE_NAME = XEPDB1)
+    )
+  )
+
+🔧 Troque o HOST para localhost:
+HOST = localhost
+
+✅ Fica assim:
+XEPDB1 =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVICE_NAME = XEPDB1)
+    )
+  )
+
+
+💾 Salve o arquivo
+
+🔄 PASSO 4 — Reiniciar o Listener
+
+Abra o Prompt de Comando como Administrador e execute:
+
+lsnrctl stop
+lsnrctl start
+
+
+Depois confirme:
+
+lsnrctl status
+
+
+✔️ Agora você deve ver:
+
+HOST=localhost
+
+
+ou
+
+HOST=127.0.0.1
+
+🔌 PASSO 5 — Testar no SQL Developer
+
+Agora configure assim:
+
+Host: localhost
+
+Porta: 1521
+
+Tipo: Nome do Serviço
+
+Serviço: XEPDB1
+
+Usuário: system
+
+Senha: sua senha
+
+👉 Clique em Testar
+
+✅ Status: Sucesso
+
+🚨 Se der erro (plano B rápido)
+
+Se por algum motivo não subir:
+
+lsnrctl stop
+lsnrctl start
+
+
+ou reinicie o serviço:
+
+OracleOraDB18Home1TNSListener
+
+🎯 Resultado final
+
+✔️ Oracle escutando em localhost
+✔️ Conexão limpa e profissional
+✔️ Pronto para aplicações web, desktop ou mobile
+✔️ Base sólida para crescer no futuro
+
+👉 Quando conectar com sucesso, me diga:
+“Conectou”
+
+Aí seguimos para o próximo nível:
+
+👤 Criar usuário da aplicação
+
+🔐 Segurança correta
+
+🍕 Fluxo real de vendas da pizzaria
+
+axhei isso no primeiro arquivo
+
+Boa 👍, isso ajuda bastante.
+
+O que você achou no primeiro arquivo (listener.ora) é exatamente o motivo do erro. Pelo lsnrctl status que você mostrou antes, deu pra ver isto aqui 👇:
+
+(PROTOCOL=TCP)(HOST=192.168.56.1)(PORT=1521)
+
+
+Ou seja:
+🔴 O listener NÃO está escutando em localhost, está escutando nesse IP 192.168.56.1 (geralmente IP de VirtualBox).
+
+Agora vamos corrigir isso com calma, sem apagar nada importante.
+
+✅ O que você deve fazer AGORA no listener.ora
+
+No arquivo listener.ora, procure por algo parecido com isso:
+
+LISTENER =
+  (DESCRIPTION_LIST =
+    (DESCRIPTION =
+      (ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.56.1)(PORT = 1521))
+    )
+  )
+
+🔧 ALTERE APENAS O HOST
+
+Troque:
+
+HOST = 192.168.56.1
+
+
+por:
+
+HOST = localhost
+
+✅ Deve ficar assim:
+LISTENER =
+  (DESCRIPTION_LIST =
+    (DESCRIPTION =
+      (ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521))
+    )
+  )
+
+
+⚠️ Não apague mais nada, só essa troca.
+
+💾 Salve o arquivo
+
+🔄 Passo seguinte (obrigatório)
+
+Abra o Prompt de Comando como Administrador e execute:
+
+lsnrctl stop
+lsnrctl start
+
+
+Depois confirme:
+
+lsnrctl status
+
+
+👉 Veja se agora aparece algo como:
+
+HOST=localhost
+
+
+ou
+
+HOST=127.0.0.1
+
+🔌 Depois disso, no SQL Developer
+
+Configure assim (bem importante):
+
+Host: localhost
+
+Porta: 1521
+
+Tipo de conexão: Nome do Serviço
+
+Serviço: XEPDB1
+
+Usuário: system
+
+Senha: sua senha
+
+Clique em Testar.
+
+❗ Se der erro ainda
+
+Me diga exatamente:
+
+a mensagem de erro do SQL Developer
+
+e copie aqui o conteúdo atual do listener.ora (pode colar sem medo)
+
+A gente resolve isso, você está muito perto de conectar 👌
+
+</pre>
+<pre>
+
+# listener.ora Network Configuration File: R:\Oracle\product\18.0.0\dbhomeXE\NETWORK\ADMIN\listener.ora
+# Generated by Oracle configuration tools.
+
+DEFAULT_SERVICE_LISTENER = XE
+
+SID_LIST_LISTENER =
+  (SID_LIST =
+    (SID_DESC =
+      (SID_NAME = CLRExtProc)
+      (ORACLE_HOME = R:\Oracle\product\18.0.0\dbhomeXE)
+      (PROGRAM = extproc)
+      (ENVS = "EXTPROC_DLLS=ONLY:R:\Oracle\product\18.0.0\dbhomeXE\bin\oraclr18.dll")
+    )
+  )
+
+LISTENER =
+  (DESCRIPTION_LIST =
+    (DESCRIPTION =
+      (ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.56.1)(PORT = 1521))
+      (ADDRESS = (PROTOCOL = IPC)(KEY = EXTPROC1521))
+    )
+  )   no outro # tnsnames.ora Network Configuration File: R:\Oracle\product\18.0.0\dbhomeXE\NETWORK\ADMIN\tnsnames.ora
+# Generated by Oracle configuration tools.
+
+XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.56.1)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = XE)
+    )
+  )
+
+LISTENER_XE =
+  (ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.56.1)(PORT = 1521))
+
+
+ORACLR_CONNECTION_DATA =
+  (DESCRIPTION =
+    (ADDRESS_LIST =
+      (ADDRESS = (PROTOCOL = IPC)(KEY = EXTPROC1521))
+    )
+    (CONNECT_DATA =
+      (SID = CLRExtProc)
+      (PRESENTATION = RO)
+    )
+  )
+
+Perfeito, agora ficou 100% claro 👌
+Você achou exatamente os dois pontos que precisavam de ajuste. Vamos arrumar isso do jeito certo e seguro.
+
+Você está quase lá 🚀
+
+🔴 O problema (resumo rápido)
+
+Tanto o listener.ora quanto o tnsnames.ora estão apontando para:
+
+HOST = 192.168.56.1
+
+
+Mas no SQL Developer você está tentando conectar via localhost.
+👉 Resultado: ORA-12541 – não há listener.
+
+A solução é padronizar tudo para localhost.
+
+✅ PASSO 1 – Corrigir o listener.ora
+
+📄 Arquivo:
+
+R:\Oracle\product\18.0.0\dbhomeXE\NETWORK\ADMIN\listener.ora
+
+🔧 ALTERE SOMENTE ISSO:
+
+Troque esta linha:
+
+(ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.56.1)(PORT = 1521))
+
+
+por:
+
+(ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521))
+
+
+📌 O arquivo ficará assim (trecho principal):
+
+LISTENER =
+  (DESCRIPTION_LIST =
+    (DESCRIPTION =
+      (ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521))
+      (ADDRESS = (PROTOCOL = IPC)(KEY = EXTPROC1521))
+    )
+  )
+
+
+💾 Salve o arquivo.
+
+✅ PASSO 2 – Corrigir o tnsnames.ora
+
+📄 Arquivo:
+
+R:\Oracle\product\18.0.0\dbhomeXE\NETWORK\ADMIN\tnsnames.ora
+
+🔧 TROQUE TODOS OS HOST = 192.168.56.1 por localhost
+
+Exemplo corrigido:
+
+XE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = XE)
+    )
+  )
+
+LISTENER_XE =
+  (ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521))
+
+
+💾 Salve o arquivo.
+
+🔄 PASSO 3 – Reiniciar o Listener (obrigatório)
+
+Abra o Prompt de Comando como Administrador e execute:
+
+lsnrctl stop
+lsnrctl start
+lsnrctl status
+
+
+👉 Confira se agora aparece algo como:
+
+HOST=localhost
+
+
+ou
+
+HOST=127.0.0.1
+
+
+Se aparecer isso: ✅ sucesso.
+
+🔌 PASSO 4 – SQL Developer (configuração correta)
+
+No SQL Developer:
+
+Nome da conexão: Pizzaria
+
+Usuário: system
+
+Senha: sua senha
+
+Tipo de conexão: Básico
+
+Host: localhost
+
+Porta: 1521
+
+Tipo: Nome do Serviço
+
+Serviço: XE
+👉 (se falhar, testamos XEPDB1 depois)
+
+Clique em Testar.
+
+🧠 Dica importante (nível profissional)
+
+Mais pra frente, quando seu projeto virar sistema real:
+
+localhost → ambiente local
+
+IP fixo ou hostname → servidor
+
+Application (Java / Web) → conecta via Service Name
+
+Você já está montando isso do jeito certo 👍
+
+📌 Próximo passo (quando conectar)
+
+Assim que der Status: Sucesso, a gente:
+
+Cria um usuário próprio da pizzaria (não usar SYSTEM)
+
+Organiza schema
+
+Continua fluxo de vendas + financeiro
+
+Me diga:
+
+✅ Conectou?
+
+❌ Qual erro apareceu?
+
+Vamos até o fim nisso 🍕💻
+
+</pre>

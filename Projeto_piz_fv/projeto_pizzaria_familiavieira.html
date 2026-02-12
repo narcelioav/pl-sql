@@ -1,0 +1,1643 @@
+<pre>
+  https://openai.com/pt-BR/index/chatgpt/ Ola, preciso de ajuda com meus estudos em banco de dados Pl sql, sou inexperiente no assunto e busco um projeto para aprimorar o que aprendi, estava pensando em algo voltado para gestão de uma empresa de pissaria, tipo compra de produtos, estoque e mais como financeiro, você poderia me orientar pois não sei por onde começar
+
+Oi! 😊 Que legal você já estar pensando em aprender PL/SQL com um projeto prático — isso é exatamente o melhor jeito, ainda mais sendo iniciante. E a ideia da pizzaria é perfeita 🍕
+
+Vou te orientar do zero, passo a passo, como se fosse um caminho de estudos + projeto. Não precisa saber tudo agora.
+
+Objetivo do projeto
+
+Criar um mini sistema de gestão de uma pizzaria, usando Oracle + PL/SQL, que controle:
+
+Produtos (ingredientes, pizzas, bebidas)
+
+Estoque
+
+Compras
+
+Vendas
+
+Financeiro básico
+
+Tudo isso no banco de dados, usando:
+
+CREATE TABLE
+
+SELECT
+
+INSERT / UPDATE / DELETE
+
+PROCEDURES
+
+FUNCTIONS
+
+TRIGGERS
+
+ETAPA 1 – Modelar o banco (PASSO MAIS IMPORTANTE)
+
+Antes de PL/SQL, você precisa das tabelas. Comece simples 👇
+
+📦 1. Produtos
+CREATE TABLE produto (
+    id_produto NUMBER PRIMARY KEY,
+    nome        VARCHAR2(100),
+    tipo        VARCHAR2(30), -- ingrediente, pizza, bebida
+    preco       NUMBER(10,2)
+);
+
+🏬 2. Estoque
+CREATE TABLE estoque (
+    id_produto NUMBER,
+    quantidade NUMBER,
+    CONSTRAINT fk_estoque_produto
+        FOREIGN KEY (id_produto) REFERENCES produto(id_produto)
+);
+
+🧾 3. Vendas
+CREATE TABLE venda (
+    id_venda NUMBER PRIMARY KEY,
+    data_venda DATE,
+    valor_total NUMBER(10,2)
+);
+
+🍕 4. Itens da venda
+CREATE TABLE item_venda (
+    id_venda NUMBER,
+    id_produto NUMBER,
+    quantidade NUMBER,
+    preco_unitario NUMBER(10,2),
+    CONSTRAINT fk_iv_venda FOREIGN KEY (id_venda) REFERENCES venda(id_venda),
+    CONSTRAINT fk_iv_produto FOREIGN KEY (id_produto) REFERENCES produto(id_produto)
+);
+
+
+👉 Dica de iniciante: não tente fazer tudo perfeito agora. Funcional > perfeito.
+
+
+ETAPA 2 – Começar com PL/SQL simples
+
+Agora entra o PL/SQL 🧠
+
+✅ Procedure para cadastrar produto
+CREATE OR REPLACE PROCEDURE cadastrar_produto (
+    p_id NUMBER,
+    p_nome VARCHAR2,
+    p_tipo VARCHAR2,
+    p_preco NUMBER
+) IS
+BEGIN
+    INSERT INTO produto VALUES (p_id, p_nome, p_tipo, p_preco);
+    INSERT INTO estoque VALUES (p_id, 0);
+
+    DBMS_OUTPUT.PUT_LINE('Produto cadastrado com sucesso!');
+END;
+
+
+👉 Aqui você aprende:
+
+PROCEDURE
+
+parâmetros
+
+INSERT
+
+DBMS_OUTPUT
+
+📉 ETAPA 3 – Controlar estoque automaticamente (TRIGGER)
+
+Quando vender algo, o estoque deve baixar sozinho ⬇️
+
+Trigger de saída de estoque
+CREATE OR REPLACE TRIGGER trg_baixa_estoque
+AFTER INSERT ON item_venda
+FOR EACH ROW
+BEGIN
+    UPDATE estoque
+    SET quantidade = quantidade - :NEW.quantidade
+    WHERE id_produto = :NEW.id_produto;
+END;
+
+
+👉 Isso é nível muito bom para iniciante, sério 👏
+
+💰 ETAPA 4 – Financeiro básico
+Função para calcular faturamento do dia
+CREATE OR REPLACE FUNCTION faturamento_dia(p_data DATE)
+RETURN NUMBER IS
+    v_total NUMBER;
+BEGIN
+    SELECT SUM(valor_total)
+    INTO v_total
+    FROM venda
+    WHERE TRUNC(data_venda) = TRUNC(p_data);
+
+    RETURN NVL(v_total, 0);
+END;
+
+🧠 ETAPA 5 – Evoluções (quando estiver confortável)
+
+Depois que isso funcionar, você pode evoluir para:
+
+Controle de compras de ingredientes
+
+Lucro (venda – custo)
+
+Relatórios com CURSOR
+
+Validações (ex: não vender se estoque < 0)
+
+Usuários (atendente, gerente)
+
+📚 Como estudar junto com o projeto
+
+Sugestão de ordem:
+
+SELECT
+
+INSERT / UPDATE / DELETE
+
+PROCEDURE
+
+FUNCTION
+
+TRIGGER
+
+CURSOR
+
+Sempre aplicando no projeto da pizzaria 🍕
+
+💬 Próximo passo (bem importante)
+
+Se você quiser, eu posso:
+
+Montar o diagrama do banco com você
+
+Te passar desafios semanais (tipo curso)
+
+Corrigir seus códigos e explicar linha por linha
+
+Adaptar tudo ao nível escolar (sem complicar)
+
+👉 Me diz:
+você já está usando Oracle (SQL Developer / Live SQL) ou ainda vai instalar?
+
+
+</pre>
+
+<pre>
+    Ola estou usando live sql, mas não domino esta ferramenta, preciso de ajuda com isso, e sobre a o comando para criar um banco de dados, qual o comando usar?
+
+    Oi! 😄 Tranquilo — todo mundo se perde no começo com o Live SQL, então você está no caminho certo 👍
+Vamos por partes, bem calminho.
+
+🧠 1️⃣ Antes de tudo: no Oracle NÃO existe CREATE DATABASE (como no MySQL)
+
+👉 Isso é muito importante.
+
+No Oracle / Live SQL:
+
+O banco de dados já existe
+
+Você não cria banco
+
+Você cria TABELAS, PROCEDURES, FUNCTIONS, TRIGGERS
+
+📌 Pense assim:
+
+O Live SQL já te entrega um banco pronto.
+Você só “constrói a pizzaria dentro dele” 🍕
+
+Por isso:
+❌ CREATE DATABASE pizzaria; → NÃO existe no Oracle
+✅ CREATE TABLE, CREATE PROCEDURE, etc.
+
+🖥️ 2️⃣ Como usar o Live SQL (passo a passo)
+🔹 Onde você escreve o código
+
+Entre no Live SQL
+
+Clique em SQL Worksheet
+
+Escreva seu código ali
+
+Clique em Run Script (▶)
+
+📌 Sempre termine comandos SQL com ;
+
+🧱 3️⃣ Seu “banco da pizzaria” começa criando tabelas
+
+Vamos criar a primeira tabela bem simples 👇
+Copia e cola no Live SQL:
+
+CREATE TABLE produto (
+    id_produto NUMBER PRIMARY KEY,
+    nome        VARCHAR2(100),
+    tipo        VARCHAR2(30),
+    preco       NUMBER(10,2)
+);
+
+
+Depois clica em Run Script.
+
+Se aparecer:
+
+Table created.
+
+🎉 Perfeito, funcionou!
+
+📦 4️⃣ Criar a tabela de estoque
+CREATE TABLE estoque (
+    id_produto NUMBER,
+    quantidade NUMBER,
+    CONSTRAINT fk_estoque_produto
+        FOREIGN KEY (id_produto) REFERENCES produto(id_produto)
+);
+
+🔍 5️⃣ Como ver se a tabela existe
+
+No Live SQL, roda:
+
+SELECT * FROM produto;
+
+
+Vai dar erro se não existir, ou mostrar vazio se existir 👍
+
+Ou:
+
+SELECT table_name FROM user_tables;
+
+⚙️ 6️⃣ Primeiro comando PL/SQL (bem simples)
+
+No Oracle, PL/SQL usa BEGIN e END.
+
+Teste isso:
+
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('Olá, pizzaria!');
+END;
+/
+
+
+📌 Importante:
+
+O / é obrigatório para rodar blocos PL/SQL
+
+Depois:
+
+Clique em Run Script
+
+Veja a aba Output
+
+🚨 Problema comum no Live SQL
+
+Se não aparecer nada no Output:
+
+Clique em Settings
+
+Ative DBMS Output
+
+Salve
+
+🧩 7️⃣ O que você deve dominar agora (sem pressa)
+
+Ordem ideal pra você:
+
+CREATE TABLE
+
+INSERT INTO
+
+SELECT
+
+BEGIN … END
+
+PROCEDURE
+
+Exemplo de INSERT:
+
+INSERT INTO produto VALUES (1, 'Pizza Calabresa', 'pizza', 45);
+COMMIT;
+
+🎯 Próximo passo (vamos juntos)
+
+Agora quero te guiar com exercícios reais.
+
+👉 Faça isso e me diga o resultado:
+
+Crie a tabela produto
+
+Insira 2 produtos
+
+Rode SELECT * FROM produto;
+
+Se der erro, me manda o erro aqui que eu explico linha por linha 😉
+</pre>
+
+<pre>
+    ja tenho um projeto com tres tabelas no live sql, como faço pra organizar, tem como deixar separado em pastas?
+
+    Ótima pergunta 👏 — isso já é mentalidade de quem quer organizar projeto de verdade, mesmo sendo iniciante.
+
+Resposta direta
+
+👉 No Live SQL não existe “pastas” como no SQL Developer.
+Mas dá pra organizar muito bem usando scripts, comentários e padrão de nomes.
+
+Vou te mostrar como os profissionais fazem quando estão presos a uma ferramenta simples, tipo o Live SQL.
+
+🧠 Como o Live SQL funciona por trás
+
+Pensa assim:
+
+O banco é um só
+
+Suas tabelas ficam todas juntas
+
+A organização acontece no código, não na interface
+
+Então a pergunta vira:
+
+“Como organizar o projeto no script?”
+
+🧱 1️⃣ Um arquivo/script por “módulo”
+
+No Live SQL, você pode criar vários scripts salvos.
+
+📁 Organização sugerida (mental)
+📄 01_tabelas.sql
+📄 02_inserts.sql
+📄 03_procedures.sql
+📄 04_triggers.sql
+📄 05_consultas.sql
+
+
+No Live SQL:
+
+Clique em My Scripts
+
+Crie um script para cada parte
+
+💡 Isso substitui as “pastas”.
+
+🧾 2️⃣ Use comentários grandes para separar seções
+
+Dentro de um script, faça assim 👇
+
+/* ======================================
+   TABELAS - PROJETO PIZZARIA
+   ====================================== */
+
+-- Tabela de produtos
+CREATE TABLE produto (
+    id_produto NUMBER PRIMARY KEY,
+    nome        VARCHAR2(100),
+    preco       NUMBER(10,2)
+);
+
+-- Tabela de estoque
+CREATE TABLE estoque (
+    id_produto NUMBER,
+    quantidade NUMBER,
+    CONSTRAINT fk_estoque_produto
+        FOREIGN KEY (id_produto) REFERENCES produto(id_produto)
+);
+
+
+Isso é super usado no mercado, não é gambiarra 👍
+
+🏷️ 3️⃣ Padrão de nomes (isso vale OURO)
+
+Use prefixos para “simular pastas”:
+
+📦 Tabelas
+
+tb_produto
+
+tb_estoque
+
+tb_venda
+
+⚙️ Procedures
+
+pr_cadastrar_produto
+
+pr_realizar_venda
+
+🔁 Triggers
+
+tr_baixa_estoque
+
+🔢 Sequences
+
+seq_produto
+
+seq_venda
+
+Exemplo:
+
+CREATE OR REPLACE PROCEDURE pr_cadastrar_produto ...
+
+
+👉 Só pelo nome, você já sabe o que é o quê.
+
+📋 4️⃣ Comentários explicando o objetivo
+
+Isso ajuda MUITO quando você voltar depois:
+
+-- Procedure responsável por cadastrar produtos
+-- e iniciar o estoque com quantidade zero
+CREATE OR REPLACE PROCEDURE pr_cadastrar_produto (
+    p_nome VARCHAR2,
+    p_preco NUMBER
+) IS
+BEGIN
+    ...
+END;
+/
+
+🔍 5️⃣ Como “ver tudo organizado” no Live SQL
+
+Rode isso pra ver o que você já tem:
+
+📦 Tabelas
+SELECT table_name FROM user_tables;
+
+⚙️ Procedures
+SELECT object_name FROM user_procedures;
+
+🔁 Triggers
+SELECT trigger_name FROM user_triggers;
+
+🚀 Dica importante (nível mercado)
+
+Quando você sair do Live SQL para o SQL Developer, essa mesma organização:
+
+vira pastas
+
+vira versionamento (Git)
+
+vira projeto real
+
+Ou seja: o que você fizer agora já vale como aprendizado profissional 💪
+
+🎯 Próximo passo (bem prático)
+
+Me conta:
+
+Quais são as 3 tabelas que você já criou?
+
+Elas são de produto / estoque / venda ou outra coisa?
+
+Se quiser, eu:
+
+reorganizo os nomes
+
+te ajudo a separar em scripts
+
+monto um “padrão oficial” do seu projeto da pizzaria 🍕
+</pre>
+
+<pre>
+    criei as tabelas fv_tb_produtos, fv_tb_estoques, fv_tb_vendas, mas tem tres tabelas anteriores cargo, departamento, funcionario, que quero deletar como faço
+
+    Boa 👏 sua organização com prefixo fv_ já está bem certinha 👍
+Agora vamos limpar o ambiente.
+
+🗑️ Como deletar tabelas no Oracle (Live SQL)
+
+No Oracle, para apagar uma tabela, o comando é:
+
+DROP TABLE nome_da_tabela;
+
+Então, no seu caso:
+DROP TABLE cargo;
+DROP TABLE departamento;
+DROP TABLE funcionario;
+
+
+👉 Rode um por vez ou tudo junto no mesmo script.
+
+⚠️ Problema comum: erro de chave estrangeira
+
+Se aparecer um erro tipo:
+
+ORA-02449: unique/primary keys in table referenced by foreign keys
+
+Significa que:
+
+Uma tabela está ligada à outra por FOREIGN KEY
+
+💡 Exemplo comum:
+
+funcionario → depende de departamento
+
+departamento → depende de cargo
+
+✅ Solução 1 (mais segura – recomendada para iniciante)
+
+Apagar na ordem certa:
+
+DROP TABLE funcionario;
+DROP TABLE departamento;
+DROP TABLE cargo;
+
+✅ Solução 2 (mais rápida – força a exclusão)
+
+Usar CASCADE CONSTRAINTS:
+
+DROP TABLE funcionario CASCADE CONSTRAINTS;
+DROP TABLE departamento CASCADE CONSTRAINTS;
+DROP TABLE cargo CASCADE CONSTRAINTS;
+
+
+👉 Isso apaga a tabela e todas as relações dela.
+
+🔍 Conferir se apagou mesmo
+
+Depois, rode:
+
+SELECT table_name FROM user_tables;
+
+
+Você deve ver só:
+
+FV_TB_PRODUTOS
+
+FV_TB_ESTOQUES
+
+FV_TB_VENDAS
+
+🧠 Dica importante (pra não dar dor de cabeça)
+
+Quando estiver estudando:
+
+Sem medo de usar DROP TABLE
+
+Ambiente de estudo é pra errar, apagar e recriar
+
+No mundo real isso muda, mas agora você está certo em limpar 👍
+
+🎯 Próximo passo (te guiando)
+
+Quer que a gente faça agora:
+
+Revisar suas 3 tabelas fv_
+
+Ajustar chaves primárias / estrangeiras
+
+Criar a primeira procedure da pizzaria
+
+👉 Me manda o CREATE TABLE delas que eu reviso contigo, linha por linha 😄🍕
+</pre>
+
+<pre>
+    segue as tabela que ja criei, e tambem uma procedure,
+
+    Mandou muito bem 👏👏
+Sério — isso aqui já é projeto de verdade, não mais “exercício solto”. Vou revisar como um professor faria, apontando o que está correto, o que pode melhorar e por quê, tudo no seu nível 👍
+
+✅ VISÃO GERAL
+
+Você já tem:
+
+✔️ Modelagem coerente
+
+✔️ Padrão de nomes (fv_)
+
+✔️ Relacionamentos corretos
+
+✔️ Primeira procedure funcional
+
+Agora vamos organizar, corrigir pequenos detalhes e profissionalizar.
+
+🧱 1️⃣ Tabelas – análise uma a uma
+📦 fv_tb_produtos → CORRETA
+create table fv_tb_produtos (
+    id_produto number PRIMARY KEY,
+    nome VARCHAR2(100),
+    tipo VARCHAR2(30), -- ingrediente, pizza, bebida
+    preco number(10,2)
+);
+
+
+✔️ Estrutura ok
+✔️ Comentário ajuda muito
+💡 Sugestão futura: validar tipo (mas não agora)
+
+🧾 fv_tb_vendas → CORRETA
+create table fv_tb_vendas (
+    id_venda number PRIMARY KEY,
+    data_venda date,
+    valor_total number(10,2)
+);
+
+
+✔️ Simples e funcional
+💡 Depois podemos calcular valor_total automaticamente (nível 2)
+
+🏬 fv_tb_estoques → CORRETA
+create table fv_tb_estoques (
+    id_produto number,
+    quantidade number,
+    CONSTRAINT fk_fv_tb_estoques_fv_tb_produtos
+    FOREIGN KEY (id_produto) REFERENCES fv_tb_produtos(id_produto)
+);
+
+
+✔️ FK correta
+⚠️ Melhoria importante (recomendado):
+
+👉 Cada produto deve aparecer uma única vez no estoque.
+
+id_produto number PRIMARY KEY,
+
+
+💡 Isso evita duplicidade.
+
+🍕 fv_tb_item_vendas → BEM FEITA
+create table fv_tb_item_vendas (
+    id_venda number,
+    id_produto number,
+    quantidade number,
+    preco_unitario number(10,2),
+    constraint fk_iv_venda foreign key (id_venda) 
+        REFERENCES fv_tb_vendas(id_venda),
+    CONSTRAINT fk_iv_produto foreign key (id_produto) 
+        REFERENCES fv_tb_produtos(id_produto)
+);
+
+
+✔️ Relacionamento clássico (venda × produto)
+💡 No futuro: chave composta (id_venda, id_produto)
+
+⚙️ 2️⃣ Procedure fv_pr_cadastrar_produtos
+🔎 Seu código
+create or REPLACE PROCEDURE fv_pr_cadastrar_produtos (
+    p_id NUMBER,
+    p_nome VARCHAR2,
+    p_tipo VARCHAR2,
+    p_preco NUMBER
+) IS
+BEGIN
+    INSERT INTO FV_TB_PRODUTOS VALUES (p_id, p_nome, p_tipo, p_preco);
+    INSERT INTO FV_TB_ESTOQUES VALUES (p_id, 0);
+    DBMS_OUTPUT.PUT_LINE('Produto cadastrado com sucesso!');
+END;
+/
+
+✅ Pontos fortes
+
+✔️ Nome bem escolhido
+✔️ Insere em duas tabelas (lógica correta)
+✔️ Usa DBMS_OUTPUT
+
+Isso já é PL/SQL de verdade 👏
+
+🔧 3️⃣ Melhorias IMPORTANTES (mas simples)
+🔹 1. Sempre usar COMMIT
+
+No Live SQL, sem COMMIT, os dados podem não persistir.
+
+COMMIT;
+
+🔹 2. Tratar erro (iniciante-friendly)
+
+Se tentar cadastrar um id_produto repetido, vai dar erro feio.
+Vamos deixar isso mais didático:
+
+EXCEPTION
+    WHEN DUP_VAL_ON_INDEX THEN
+        DBMS_OUTPUT.PUT_LINE('Erro: ID do produto já existe.');
+
+✅ Procedure melhorada (versão recomendada)
+CREATE OR REPLACE PROCEDURE fv_pr_cadastrar_produtos (
+    p_id NUMBER,
+    p_nome VARCHAR2,
+    p_tipo VARCHAR2,
+    p_preco NUMBER
+) IS
+BEGIN
+    INSERT INTO fv_tb_produtos
+    VALUES (p_id, p_nome, p_tipo, p_preco);
+
+    INSERT INTO fv_tb_estoques
+    VALUES (p_id, 0);
+
+    COMMIT;
+
+    DBMS_OUTPUT.PUT_LINE('Produto cadastrado com sucesso!');
+EXCEPTION
+    WHEN DUP_VAL_ON_INDEX THEN
+        DBMS_OUTPUT.PUT_LINE('Erro: produto já cadastrado.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Erro inesperado.');
+END;
+/
+
+▶️ 4️⃣ Como testar sua procedure
+BEGIN
+    fv_pr_cadastrar_produtos(1, 'Pizza Calabresa', 'pizza', 45);
+END;
+/
+
+
+Depois:
+
+SELECT * FROM fv_tb_produtos;
+SELECT * FROM fv_tb_estoques;
+
+🧠 NÍVEL QUE VOCÊ ESTÁ AGORA
+
+Sem exagero:
+
+iniciante → iniciante avançando bem rápido
+
+Você já domina:
+
+Modelagem básica
+
+FK
+
+Procedure
+
+Organização de projeto
+
+🎯 Próximo passo (sequência ideal)
+
+Sugiro agora:
+1️⃣ Criar SEQUENCE para IDs
+2️⃣ Criar procedure registrar venda
+3️⃣ Criar TRIGGER para baixar estoque
+4️⃣ Relatório de faturamento
+
+👉 Quer seguir nessa ordem ou prefere entender melhor cada tabela primeiro?
+</pre>
+
+<pre>
+    sim vamos proceguir, mas analise a trigger que criei e a função de faturamento
+
+    Excelente 👏👏
+Agora sim dá pra analisar como projeto, não só como exercício. Vou ser bem direto e didático — você está indo muito bem pra quem se diz iniciante.
+
+🔁 1️⃣ Análise da TRIGGER fv_trg_baixa_estoques
+📌 Seu código
+CREATE OR REPLACE TRIGGER fv_trg_baixa_estoques
+AFTER INSERT ON fv_tb_item_vendas
+FOR EACH ROW
+BEGIN
+    UPDATE fv_tb_estoques
+    SET quantidade = quantidade - :NEW.quantidade
+    WHERE id_produto = :NEW.id_produto;
+END;
+/
+
+✅ O que está CORRETO
+
+✔️ Evento certo: AFTER INSERT
+✔️ FOR EACH ROW → obrigatório nesse caso
+✔️ Uso correto de :NEW
+✔️ Lógica clara: venda → baixa estoque
+
+👉 Isso aqui já é trigger de verdade, usada em sistema real.
+
+⚠️ Pontos de atenção (importantes)
+❗ 1. E se o estoque ficar negativo?
+
+Hoje sua trigger permite estoque negativo.
+
+💡 Exemplo:
+
+Estoque = 2
+
+Venda = 5
+👉 Resultado: -3
+
+Isso é algo que sempre cai em prova e em sistema real.
+
+❗ 2. E se o produto não existir no estoque?
+
+Se não existir registro em fv_tb_estoques, o UPDATE não faz nada e ninguém percebe.
+
+✅ Versão melhorada (ainda nível iniciante)
+CREATE OR REPLACE TRIGGER fv_trg_baixa_estoques
+BEFORE INSERT ON fv_tb_item_vendas
+FOR EACH ROW
+DECLARE
+    v_qtd_estoque NUMBER;
+BEGIN
+    SELECT quantidade
+    INTO v_qtd_estoque
+    FROM fv_tb_estoques
+    WHERE id_produto = :NEW.id_produto;
+
+    IF v_qtd_estoque < :NEW.quantidade THEN
+        RAISE_APPLICATION_ERROR(
+            -20001,
+            'Estoque insuficiente para o produto'
+        );
+    END IF;
+
+    UPDATE fv_tb_estoques
+    SET quantidade = quantidade - :NEW.quantidade
+    WHERE id_produto = :NEW.id_produto;
+END;
+/
+
+
+📌 Por que BEFORE INSERT?
+👉 Porque se der erro, a venda nem acontece.
+
+💰 2️⃣ Análise da FUNÇÃO fv_fc_faturamento_dia
+📌 Seu código
+CREATE OR REPLACE FUNCTION fv_fc_faturamento_dia(p_data DATE)
+RETURN NUMBER IS
+    v_total NUMBER;
+BEGIN
+    SELECT SUM(valor_total)
+    INTO v_total
+    FROM fv_tb_vendas
+    WHERE TRUNC(data_venda) = TRUNC(p_data);
+
+    RETURN NVL(v_total, 0);
+END;
+/
+
+✅ O que está MUITO BOM
+
+✔️ Uso correto de FUNCTION
+✔️ RETURN NUMBER
+✔️ NVL evita retorno NULL
+✔️ TRUNC resolve problema de horário
+
+👉 Isso aqui está 100% correto.
+
+Sem exagero: nota 10 👍
+
+💡 Pequena melhoria (opcional)
+
+Se não houver nenhuma venda, o SELECT INTO funciona, mas se quiser ser mais defensivo:
+
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RETURN 0;
+
+
+(Seu NVL já resolve, então isso é só didático.)
+
+▶️ Como testar a função
+SELECT fv_fc_faturamento_dia(SYSDATE)
+FROM dual;
+
+🧠 Seu nível agora
+
+Você já domina:
+
+Trigger com :NEW
+
+Controle de estoque automático
+
+Função com agregação
+
+Organização de projeto
+
+Lógica de negócio
+
+📈 Você saiu de iniciante e entrou em:
+
+iniciante avançando / intermediário inicial
+
+🎯 Próximo passo (natural)
+
+Agora o caminho lógico é:
+
+1️⃣ Trigger para calcular valor_total da venda automaticamente
+2️⃣ Procedure registrar venda completa
+3️⃣ Sequence para IDs
+4️⃣ Relatórios (mensal / por produto)
+
+👉 Quer seguir vendas ou prefere financeiro agora?
+</pre>
+
+<pre>
+    Vamos seguir com vendas
+
+    Perfeito 😄🍕
+Vendas é o coração do sistema, então essa escolha é certíssima. Vamos evoluir seu projeto como um sistema real, mas sem pular degraus.
+
+Vou te mostrar o fluxo profissional de uma venda e depois o código, tudo conectado com o que você já tem.
+
+🧠 COMO FUNCIONA UMA VENDA (VISÃO REAL)
+
+Quando uma venda acontece, o sistema faz isso:
+
+1️⃣ Cria a venda (fv_tb_vendas)
+2️⃣ Insere os itens vendidos (fv_tb_item_vendas)
+3️⃣ Baixa o estoque (sua trigger já faz isso ✅)
+4️⃣ Calcula o valor total da venda
+5️⃣ Atualiza o financeiro
+
+👉 Vamos implementar passo a passo.
+
+🧱 1️⃣ Criar SEQUENCES (muito importante)
+
+No Oracle, não existe AUTO_INCREMENT.
+Usamos SEQUENCE.
+
+🔢 Venda
+CREATE SEQUENCE fv_seq_venda
+START WITH 1
+INCREMENT BY 1;
+
+🔢 Produto (opcional, mas recomendado)
+CREATE SEQUENCE fv_seq_produto
+START WITH 1
+INCREMENT BY 1;
+
+🧾 2️⃣ Criar a VENDA (sem valor total ainda)
+Procedure: abrir venda
+CREATE OR REPLACE PROCEDURE fv_pr_abrir_venda (
+    p_id_venda OUT NUMBER
+) IS
+BEGIN
+    p_id_venda := fv_seq_venda.NEXTVAL;
+
+    INSERT INTO fv_tb_vendas (
+        id_venda,
+        data_venda,
+        valor_total
+    ) VALUES (
+        p_id_venda,
+        SYSDATE,
+        0
+    );
+
+    COMMIT;
+
+    DBMS_OUTPUT.PUT_LINE('Venda aberta. ID: ' || p_id_venda);
+END;
+/
+
+
+📌 Aqui você aprende:
+
+OUT
+
+SEQUENCE
+
+lógica de negócio
+
+🍕 3️⃣ Inserir ITENS NA VENDA
+CREATE OR REPLACE PROCEDURE fv_pr_adicionar_item_venda (
+    p_id_venda NUMBER,
+    p_id_produto NUMBER,
+    p_quantidade NUMBER
+) IS
+    v_preco fv_tb_produtos.preco%TYPE;
+BEGIN
+    SELECT preco
+    INTO v_preco
+    FROM fv_tb_produtos
+    WHERE id_produto = p_id_produto;
+
+    INSERT INTO fv_tb_item_vendas (
+        id_venda,
+        id_produto,
+        quantidade,
+        preco_unitario
+    ) VALUES (
+        p_id_venda,
+        p_id_produto,
+        p_quantidade,
+        v_preco
+    );
+
+    COMMIT;
+
+    DBMS_OUTPUT.PUT_LINE('Item adicionado à venda.');
+END;
+/
+
+
+📌 Importante:
+
+Sua trigger de estoque será disparada automaticamente
+
+Isso é PL/SQL bem feito 👍
+
+💰 4️⃣ Calcular o TOTAL da venda automaticamente (TRIGGER)
+
+Agora vem uma trigger chave 🔥
+
+CREATE OR REPLACE TRIGGER fv_trg_atualiza_total_venda
+AFTER INSERT ON fv_tb_item_vendas
+FOR EACH ROW
+BEGIN
+    UPDATE fv_tb_vendas
+    SET valor_total = valor_total +
+        (:NEW.quantidade * :NEW.preco_unitario)
+    WHERE id_venda = :NEW.id_venda;
+END;
+/
+
+
+👉 Agora:
+
+Você não precisa atualizar valor_total manualmente
+
+O banco cuida disso
+
+▶️ 5️⃣ TESTE COMPLETO (isso é importante)
+Abrir venda
+DECLARE
+    v_id_venda NUMBER;
+BEGIN
+    fv_pr_abrir_venda(v_id_venda);
+END;
+/
+
+Adicionar itens
+BEGIN
+    fv_pr_adicionar_item_venda(1, 1, 2);
+END;
+/
+
+Conferir
+SELECT * FROM fv_tb_vendas;
+SELECT * FROM fv_tb_item_vendas;
+SELECT * FROM fv_tb_estoques;
+
+🧠 O QUE VOCÊ ACABOU DE APRENDER
+
+Sem exagero:
+
+✔️ Sequence
+✔️ Procedure com OUT
+✔️ Trigger encadeada (item → estoque → total)
+✔️ Venda completa 100% no banco
+
+Isso já é nível técnico real, não só acadêmico.
+
+🎯 Próximo passo (escolha sua)
+
+Podemos agora:
+1️⃣ Cancelar venda (estorno de estoque)
+2️⃣ Relatório de vendas por período
+3️⃣ Venda parcelada / forma de pagamento
+4️⃣ Cursor para listar itens da venda
+
+👉 Qual você quer fazer agora?
+</pre>
+
+<pre>
+    Pergunta excelente — e agora você saiu totalmente do “estou estudando” para
+👉 “quero usar isso de verdade no meu negócio”. 👏👏
+
+Vou te explicar sem complicar, do jeito certo.
+
+❓ Posso usar o Live SQL no meu negócio?
+Resposta direta: não.
+
+👉 O Live SQL é só para estudo:
+
+Ambiente compartilhado
+
+Dados podem ser apagados
+
+Sem usuários
+
+Sem segurança
+
+Não feito para uso comercial
+
+Mas a boa notícia é:
+
+Tudo o que você criou SERVE 100% fora do Live SQL.
+
+Você só precisa mudar o ambiente, não o projeto.
+
+🧠 VISÃO GERAL — Como aplicar seu projeto na prática
+
+Para usar no dia a dia, você precisa de 3 camadas:
+
+🖥️ Interface (tela)
+⬇️
+⚙️ Backend (API)
+⬇️
+🗄️ Banco Oracle (seu PL/SQL)
+
+
+Seu PL/SQL já é o coração ❤️
+Agora vamos ligar ele a uma interface fácil.
+
+🧱 OPÇÃO 1 (RECOMENDADA) – ORACLE + APEX (mais fácil)
+🟢 O que é Oracle APEX?
+
+É uma ferramenta web, feita pela Oracle, que:
+
+Roda no navegador
+
+Conecta direto no banco
+
+Usa suas procedures e triggers
+
+Quase não exige programação web
+
+💡 Perfeita para quem sabe SQL/PLSQL e é iniciante em front-end.
+
+🔧 Como ficaria sua pizzaria com APEX
+
+Você teria:
+
+Tela de cadastro de produtos 🍕
+
+Tela de vendas (clicar → vender)
+
+Estoque automático
+
+Relatórios financeiros
+
+Tudo no navegador
+
+👉 Sem precisar aprender React, Java, etc.
+
+🪜 Caminho APEX (passo a passo)
+
+1️⃣ Instalar Oracle Database Express (XE)
+2️⃣ Instalar Oracle APEX
+3️⃣ Usar SQL Developer (não Live SQL)
+4️⃣ Criar telas apontando para:
+
+fv_pr_abrir_venda
+
+fv_pr_adicionar_item_venda
+
+fv_fc_faturamento_dia
+
+📌 Isso é muito usado em pequenas empresas.
+
+🧱 OPÇÃO 2 – Backend + Front-end (mais profissional, mais complexo)
+
+Se quiser algo mais “sistema moderno”:
+
+Backend (escolha 1)
+
+Java + Spring Boot
+
+Node.js
+
+Python (FastAPI)
+
+O backend chama suas procedures PL/SQL.
+
+Front-end
+
+Navegador (HTML / CSS / JS)
+
+Ou aplicativo (Android)
+
+⚠️ Essa opção exige:
+
+Programação web
+
+Mais tempo
+
+Mais complexidade
+
+👉 Não recomendo agora, sendo iniciante.
+
+🧱 OPÇÃO 3 – Desktop (mais simples, mas antigo)
+
+Java + JavaFX
+
+C#
+
+Conecta direto no Oracle
+
+Funciona, mas hoje o web é melhor.
+
+🎯 CAMINHO IDEAL PRA VOCÊ (realista)
+
+Pelo seu perfil e nível:
+
+✅ Oracle APEX + Oracle XE + PL/SQL
+
+É:
+
+Gratuito
+
+Web
+
+Seguro
+
+Profissional
+
+Muito valorizado no mercado
+
+🔥 Como seu projeto fica “dinâmico”
+
+Você não muda o PL/SQL.
+Você só:
+
+Cria telas que chamam suas procedures
+
+Mostra resultados com SELECT
+
+Exemplo:
+
+Botão “Vender” → chama fv_pr_abrir_venda
+
+Botão “Adicionar item” → chama fv_pr_adicionar_item_venda
+
+🧭 Próximo passo (bem prático)
+
+Agora me diga:
+1️⃣ Você usa Windows?
+2️⃣ Seu negócio é pequeno/médio?
+3️⃣ Quer algo simples e rápido ou mais profissional no futuro?
+
+Com isso eu te passo:
+👉 o passo a passo exato de instalação
+👉 como migrar do Live SQL
+👉 como criar a primeira tela de venda no navegador 🍕💻
+</pre>
+
+<pre>
+    Perfeito 🙌
+Sua resposta foi cirúrgica: Windows + negócio pequeno agora + visão profissional no futuro.
+Dá pra montar isso do jeito certo, sem retrabalho depois.
+
+Vou te mostrar o plano ideal, como se fosse um roadmap real de projeto.
+
+🧭 ROADMAP IDEAL (SEM JOGAR TRABALHO FORA)
+🟢 AGORA → Simples, rápido e funcional
+
+Oracle XE + APEX + PL/SQL
+
+🔵 FUTURO → Profissional, escalável
+
+Backend (API) + Front-end moderno, reaproveitando o banco
+
+👉 O segredo: seu PL/SQL continua o mesmo.
+
+🧱 FASE 1 — O QUE VAMOS FAZER AGORA
+Stack
+
+🗄️ Oracle Database XE (gratuito)
+
+🧰 SQL Developer
+
+🌐 Oracle APEX (web, navegador)
+
+O que você ganha
+
+✔️ Sistema rodando no navegador
+✔️ Controle de vendas, estoque e financeiro
+✔️ Pouquíssimo código de tela
+✔️ Aprendizado valorizado no mercado
+
+🖥️ PASSO 1 — Instalar o Oracle XE (Windows)
+🔹 O que é
+
+Banco Oracle local, só seu, seguro.
+
+🔹 Download
+
+Procure no Google:
+
+Oracle Database 21c XE Windows
+
+(ou 18c XE, se sua máquina for mais simples)
+
+🔹 Durante a instalação
+
+Crie uma senha forte (anota!)
+
+Porta padrão: 1521
+
+SID: geralmente XE
+
+📌 Isso substitui o Live SQL.
+
+🧰 PASSO 2 — Instalar SQL Developer
+
+Ferramenta profissional
+
+Onde você vai:
+
+Criar tabelas
+
+Criar procedures
+
+Manter o banco
+
+🔍 Pesquise:
+
+Oracle SQL Developer download
+
+Depois:
+
+Nova conexão
+
+Usuário: o que você criou
+
+SID: XE
+
+🌐 PASSO 3 — Instalar Oracle APEX
+
+Aqui está o pulo do gato 🐱‍👤
+
+O que o APEX faz
+
+Cria telas web automaticamente
+
+Conecta direto no banco
+
+Usa suas procedures
+
+Você acessa pelo navegador:
+
+http://localhost:8080/apex
+
+🧪 PASSO 4 — Migrar seu projeto do Live SQL
+
+Isso é simples:
+
+1️⃣ Abra seus scripts no Live SQL
+2️⃣ Copie:
+
+CREATE TABLE
+
+SEQUENCE
+
+PROCEDURE
+
+TRIGGER
+3️⃣ Cole no SQL Developer
+4️⃣ Execute
+
+👉 Seu projeto nasce igualzinho, só que profissional.
+
+🖱️ PASSO 5 — Criar a PRIMEIRA TELA DE VENDA (APEX)
+
+Exemplo:
+
+Tela: Nova Venda
+
+Botão: Abrir Venda
+
+Botão: Adicionar Item
+
+Relatório: Itens da venda
+
+Tudo chamando:
+
+fv_pr_abrir_venda
+
+fv_pr_adicionar_item_venda
+
+Sem reinventar nada.
+
+🔵 FASE 2 — FUTURO (SEMANA / MESES DEPOIS)
+
+Quando quiser algo mais moderno:
+
+Backend (API)
+
+Java + Spring Boot OU
+
+Node.js + Express OU
+
+Python + FastAPI
+
+Front-end
+
+React
+
+Vue
+
+App mobile
+
+👉 O backend chama suas procedures:
+
+BEGIN
+  fv_pr_abrir_venda(:id);
+END;
+
+
+Nada muda no banco.
+
+🧠 DECISÃO MUITO MADURA
+
+Você está fazendo:
+
+Agora: simples e funcional
+
+Depois: profissional e escalável
+
+Isso é exatamente como empresas fazem 👏
+
+🎯 PRÓXIMO PASSO (bem objetivo)
+
+Quer seguir assim?
+
+1️⃣ Eu te passo o checklist de instalação (Oracle XE + APEX)
+2️⃣ Depois criamos juntos:
+
+Workspace APEX
+
+Primeira tela (Produtos ou Vendas)
+
+👉 Me diga:
+você quer começar pela instalação ou já quer entender como o APEX funciona na prática?
+</pre>
+
+<pre>
+    Perfeito, bora colocar sua pizzaria pra sair do laboratório e virar sistema real 🍕💻
+Vou te guiar como se eu estivesse instalando junto com você no Windows. Segue ordem segura e testada pra não dar dor de cabeça.
+
+🧱 ETAPA 1 — Instalar Oracle Database XE (Banco de dados)
+
+👉 Esse é o mais importante. Ele vai substituir o Live SQL.
+
+✅ 1. Baixar o Oracle XE
+
+Procure no Google:
+
+👉 Oracle Database 21c XE download
+
+(Se não achar fácil, pode baixar o 18c XE que também funciona super bem.)
+
+✔️ Escolha:
+
+➡️ Windows x64
+
+✅ 2. Rodar a instalação
+
+Quando abrir o instalador:
+
+👉 Clique em Next até pedir senha.
+
+🔐 MUITO IMPORTANTE
+
+Crie uma senha e GUARDE.
+
+Exemplo:
+
+Senha: Algo que você lembre
+
+
+Você vai usar essa senha para:
+
+Banco
+
+SQL Developer
+
+APEX
+
+⚙️ Configurações padrão (não mexe)
+
+Deixe assim:
+
+Configuração	Valor
+Porta	1521
+SID	XE
+
+👉 Continue até finalizar.
+
+Pode demorar alguns minutos.
+
+✅ 3. Testar se o banco instalou
+
+Depois da instalação:
+
+👉 Aperte:
+
+Windows + R
+
+
+Digite:
+
+services.msc
+
+
+Procure algo como:
+
+OracleServiceXE
+OracleXETNSListener
+
+
+Se estiver Running, sucesso 🎉
+
+🧰 ETAPA 2 — Instalar SQL Developer
+
+Agora vamos instalar a ferramenta onde você vai programar.
+
+✅ 1. Download
+
+Procure no Google:
+
+👉 Oracle SQL Developer download
+
+Baixe versão Windows.
+
+✅ 2. Abrir SQL Developer
+
+Ele não precisa instalar normalmente.
+Só extrair e abrir.
+
+✅ 3. Criar conexão com banco
+
+Quando abrir:
+
+👉 Clique no botão ➕ (Nova conexão)
+
+Preencha assim:
+
+Campo	Valor
+Name	Pizzaria
+Username	system
+Password	(senha que você criou)
+Hostname	localhost
+Port	1521
+SID	XE
+
+Depois:
+
+👉 Clique em Test
+
+Se aparecer:
+
+Status: Success
+
+
+👉 Clique em Connect
+
+🌐 ETAPA 3 — Instalar Oracle APEX
+
+Essa parte é o que vai transformar tudo em sistema web.
+
+✅ 1. Baixar APEX
+
+Procure:
+
+👉 Oracle APEX download
+
+Baixe o arquivo ZIP.
+
+✅ 2. Extrair o arquivo
+
+Extraia em algum lugar fácil, exemplo:
+
+C:\apex
+
+✅ 3. Instalar APEX no banco
+
+Agora vem a única parte mais técnica, mas vou simplificar.
+
+Abra o SQL Developer.
+
+Execute esse comando:
+
+ALTER SESSION SET CONTAINER = XEPDB1;
+
+
+Depois você vai rodar o script do APEX (eu posso te guiar quando você chegar aqui).
+
+🧪 ETAPA 4 — Acessar APEX
+
+Depois de instalado:
+
+Você acessa pelo navegador:
+
+http://localhost:8080/apex
+
+
+Ali você cria:
+
+Workspace
+
+Aplicação
+
+Telas
+
+🎯 MISSÃO DE AGORA (sem pular etapa)
+
+Faça apenas isso:
+
+✅ Baixar Oracle XE
+✅ Instalar
+✅ Confirmar que serviços estão rodando
+
+Quando terminar, me diga:
+
+👉 A instalação do Oracle XE terminou sem erro?
+
+Se der qualquer problema:
+
+erro
+
+tela diferente
+
+dúvida
+
+Pode mandar print ou descrição que eu te ajudo resolver. Vamos montar isso direitinho.
+</pre>

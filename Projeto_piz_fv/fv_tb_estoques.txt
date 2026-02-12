@@ -1,0 +1,19 @@
+/* ======================================
+   TABELAS - PROJETO PIZZARIA
+   ====================================== */
+   create table fv_tb_estoques (
+    id_produto number PRIMARY KEY,
+    quantidade number,
+    CONSTRAINT fk_fv_tb_estoques_fv_tb_produtos
+    FOREIGN KEY (id_produto) REFERENCES fv_tb_produtos(id_produto)
+);
+
+Testar a procedure
+
+BEGIN
+    fv_pr_cadastrar_produtos(1, 'Pizza Calabresa', 'pizza', 45);
+END;
+/
+
+SELECT * FROM fv_tb_produtos;
+SELECT * FROM fv_tb_estoques;

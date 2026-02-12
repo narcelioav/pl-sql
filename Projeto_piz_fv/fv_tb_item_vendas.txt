@@ -1,0 +1,11 @@
+/* ======================================
+   TABELAS - PROJETO PIZZARIA
+   ====================================== */
+   create table fv_tb_item_vendas (
+    id_venda number,
+    id_produto number,
+    quantidade number,
+    preco_unitario number(10,2),
+    constraint fk_iv_venda foreign key (id_venda) REFERENCES fv_tb_vendas(id_venda),
+    CONSTRAINT fk_iv_produto foreign key (id_produto) REFERENCES fv_tb_produtos(id_produto)
+);

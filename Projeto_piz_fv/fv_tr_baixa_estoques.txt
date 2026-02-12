@@ -1,0 +1,32 @@
+/* ======================================
+   TABELAS - PROJETO PIZZARIA
+   ====================================== */
+   CREATE OR REPLACE TRIGGER fv_tr_baixa_estoques
+   --after INSERT ON fv_tb_item_vendas
+   BEFORE INSERT ON fv_tb_item_vendas
+   for EACH ROW
+
+   DECLARE
+    v_qtd_estoque NUMBER;
+   BEGIN
+    SELECT quantidade
+    INTO v_qtd_estoque
+    FROM fv_tb_estoques
+    WHERE id_produto = :NEW.id_produto;
+
+    IF v_qtd_estoque < :NEW.quantidade THEN
+        RAISE_APPLICATION_ERROR(
+            -20001,
+            'Estoque insuficiente para o produto'
+        );
+    END IF;
+
+
+    UPDATE fv_tb_estoques
+    SET quantidade = quantidade - :new.quantidade
+    WHERE ID_PRODUTO = :new.id_produto;
+END;
+/
+
+/* Por que BEFORE INSERT?
+Porque se der erro, a venda nem acontece.*/

@@ -1,0 +1,23 @@
+/* ======================================
+   TABELAS - PROJETO PIZZARIA
+   ====================================== */
+   create or REPLACE PROCEDURE fv_pr_cadastrar_produtos (
+    p_id NUMBER,
+    p_nome VARCHAR2,
+    p_tipo VARCHAR2,
+    p_preco NUMBER
+   ) IS
+   BEGIN
+    INSERT INTO FV_TB_PRODUTOS VALUES (p_id, p_nome, p_tipo, p_preco);
+    INSERT INTO FV_TB_ESTOQUES VALUES (p_id, 0);
+
+    COMMIT;
+
+    DBMS_OUTPUT.PUT_LINE('Produto cadastrado com sucesso!');
+EXCEPTION
+    WHEN DUP_VAL_ON_INDEX THEN
+        DBMS_OUTPUT.PUT_LINE('Erro: produto já cadastrado.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Erro inesperado.');
+    END;
+    /

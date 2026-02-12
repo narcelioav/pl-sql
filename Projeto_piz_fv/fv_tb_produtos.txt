@@ -1,0 +1,9 @@
+/* ======================================
+   TABELAS - PROJETO PIZZARIA
+   ====================================== */
+   create table fv_tb_produtos (
+    id_produto number PRIMARY KEY,
+    nome VARCHAR2(100),
+    tipo VARCHAR2(30), -- ingrediente, pizza, bebida
+    preco number(10,2)
+);

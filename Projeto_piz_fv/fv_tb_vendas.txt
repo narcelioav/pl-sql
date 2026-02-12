@@ -1,0 +1,8 @@
+/* ======================================
+   TABELAS - PROJETO PIZZARIA
+   ====================================== */
+   create table fv_tb_vendas (
+    id_venda number PRIMARY KEY,
+    data_venda date,
+    valor_total number(10,2)
+);

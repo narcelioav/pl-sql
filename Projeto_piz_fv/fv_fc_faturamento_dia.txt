@@ -1,0 +1,15 @@
+/* ======================================
+   TABELAS - PROJETO PIZZARIA
+   ====================================== */
+   CREATE OR REPLACE FUNCTION fv_fc_faturamento_dia(p_data DATE)
+RETURN NUMBER IS
+    v_total NUMBER;
+BEGIN
+    SELECT SUM(valor_total)
+    INTO v_total
+    FROM FV_TB_VENDAS
+    WHERE TRUNC(data_venda) = TRUNC(p_data);
+
+    RETURN NVL(v_total, 0);
+END;
+    /
